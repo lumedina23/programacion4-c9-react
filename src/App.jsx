@@ -5,13 +5,14 @@ import PiePagina from './components/layout/PiePagina.jsx'
 import Inicio from './pages/Inicio.jsx'
 import Menu from './pages/Menu.jsx'
 import Perfil from './pages/Perfil.jsx' // TEMPORAL: para ver el perfil
+import PerfilTrabajador from './pages/PerfilTrabajador.jsx' // TEMPORAL: para ver el perfil del trabajador
 import { borrarSesion, guardarSesion, obtenerSesion } from './utils/sesion.js'
 import { normalizar } from './utils/formato.js'
 
 function App() {
   const [usuario, setUsuario] = useState(obtenerSesion())
   // Página visible. Cuando se agregue React Router, esto se reemplaza por rutas.
-  const [pagina, setPagina] = useState('perfil') // TEMPORAL: volver a 'inicio'
+  const [pagina, setPagina] = useState('perfil-trabajador') // TEMPORAL: volver a 'inicio'
 
   // Igual que en el TP1: entrar como cliente borra cualquier sesión guardada
   function entrarComoCliente() {
@@ -50,7 +51,9 @@ function App() {
       <main className="flex-grow-1 position-relative overflow-hidden">
         <FondoHerramientas />
         <div className="position-relative">
-          {pagina === 'perfil' ? (
+          {pagina === 'perfil-trabajador' ? (
+            <PerfilTrabajador />
+          ) : pagina === 'perfil' ? (
             <Perfil usuario={usuario || undefined} />
           ) : pagina === 'inicio' ? (
             <Inicio alEntrarComoCliente={entrarComoCliente} alEntrarComoTrabajador={entrarComoTrabajador} />
