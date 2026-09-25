@@ -44,7 +44,7 @@ function Menu({ usuario }) {
       </section>
 
       <section className="mb-5">
-        <TituloSeccion titulo="Categorías" textoEnlace="Ver todas" />
+        <TituloSeccion titulo="Categorías" textoEnlace="Ver todas" destino="/oficios" />
         <Row xs={2} sm={4} className="g-3">
           {CATEGORIAS_MENU.map((categoria) => (
             <Col key={categoria.nombre}>
@@ -55,7 +55,7 @@ function Menu({ usuario }) {
       </section>
 
       <section>
-        <TituloSeccion titulo="Cerca de vos" textoEnlace="Ver más" />
+        <TituloSeccion titulo="Cerca de vos" textoEnlace="Ver más" destino="/oficios" />
         <Row xs={1} md={2} className="g-4">
           {CERCANOS.map((profesional) => (
             <Col key={profesional.id}>

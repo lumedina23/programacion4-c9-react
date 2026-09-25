@@ -115,7 +115,7 @@ function Inicio({ alEntrarComoCliente, alEntrarComoTrabajador }) {
 
       <section className="py-5">
         <Container>
-          <TituloSeccion titulo="Elegí un oficio" textoEnlace="Ver todos" />
+          <TituloSeccion titulo="Elegí un oficio" />
           <Row xs={2} sm={4} lg={8} className="g-3">
             {CATEGORIAS.map((categoria) => (
               <Col key={categoria.nombre}>
@@ -133,7 +133,7 @@ function Inicio({ alEntrarComoCliente, alEntrarComoTrabajador }) {
 
       <section className="py-5">
         <Container>
-          <TituloSeccion titulo="Profesionales destacados" textoEnlace="Ver todos" />
+          <TituloSeccion titulo="Profesionales destacados" />
           <Row xs={1} md={2} lg={3} className="g-4">
             {DESTACADOS.map((profesional) => (
               <Col key={profesional.id}>
