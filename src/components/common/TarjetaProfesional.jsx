@@ -1,10 +1,11 @@
 import { useState } from 'react'
 import { Badge, Button, Card } from 'react-bootstrap'
+import { Link } from 'react-router-dom'
 import { CATEGORIAS } from '../../data/categorias.js'
 import { formatearPrecio, iniciales } from '../../utils/formato.js'
 
 function TarjetaProfesional({ profesional }) {
-  const { nombre, oficio, categoria, rating, resenas, distancia, precio, disponible } = profesional
+  const { id, nombre, oficio, categoria, rating, resenas, distancia, precio, disponible } = profesional
   const [guardado, setGuardado] = useState(false)
 
   const datosCategoria = CATEGORIAS.find((cat) => cat.nombre === categoria)
@@ -54,7 +55,13 @@ function TarjetaProfesional({ profesional }) {
         <span className="fw-bold">
           {formatearPrecio(precio)} <span className="text-secondary fw-normal small">/ hora</span>
         </span>
-        <Button variant="primary" size="sm" className="rounded-pill px-3" disabled={!disponible}>
+        {/* Igual que en el TP1: Contratar lleva al perfil, y desde ahí se pide el servicio */}
+        <Button
+          variant="primary"
+          size="sm"
+          className="rounded-pill px-3"
+          {...(disponible ? { as: Link, to: `/profesional/${id}` } : { disabled: true })}
+        >
           Contratar
         </Button>
       </Card.Footer>

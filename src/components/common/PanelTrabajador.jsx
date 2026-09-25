@@ -1,4 +1,5 @@
 import { Badge, Card, Col, Container, ListGroup, Row } from 'react-bootstrap'
+import { Link } from 'react-router-dom'
 
 function PanelTrabajador({ nombre, calificacion, pedidosPendientes }) {
   return (
@@ -35,7 +36,7 @@ function PanelTrabajador({ nombre, calificacion, pedidosPendientes }) {
       </Row>
 
       <ListGroup className="shadow-sm">
-        <ListGroup.Item action href="#" className="d-flex align-items-center gap-3 py-3">
+        <ListGroup.Item action as={Link} to="/historial-trabajador" className="d-flex align-items-center gap-3 py-3">
           <i className="bi bi-clipboard-check text-primary fs-3"></i>
           <div className="flex-grow-1">
             <h2 className="h6 fw-bold mb-1">Pedidos recibidos</h2>

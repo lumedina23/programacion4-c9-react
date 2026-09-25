@@ -32,3 +32,10 @@ export function obtenerPedidos() {
     return []
   }
 }
+
+// Agrega un pedido nuevo a la lista guardada y lo devuelve (con id y fecha de creación)
+export function guardarPedido(datos) {
+  const pedido = { ...datos, id: Date.now(), creadoEl: new Date().toISOString() }
+  localStorage.setItem(CLAVE_PEDIDOS, JSON.stringify([...obtenerPedidos(), pedido]))
+  return pedido
+}
