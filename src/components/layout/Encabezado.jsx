@@ -1,12 +1,39 @@
 import { useState } from 'react'
-import { Button, Container, Nav, Navbar } from 'react-bootstrap'
+import { Container, Nav, Navbar } from 'react-bootstrap'
 import { Link, NavLink } from 'react-router-dom'
 import PanelAyuda from './PanelAyuda.jsx'
 import logo from '../../assets/img/hombrelogo.png'
 
+// Estilo tipo píldora (basado en un diseño de Uiverse.io, pasado a Bootstrap)
+const PILDORA = 'd-flex gap-1 p-1 rounded-pill bg-white bg-opacity-25 border border-white border-opacity-50 shadow-sm'
+const BOTON_PILDORA = 'btn border-0 rounded-pill flex-fill d-flex flex-column align-items-center px-3 py-2'
+
+// El link de la página actual queda blanco con texto azul; los demás se aclaran al pasar el mouse
+function claseLink({ isActive }) {
+  return `${BOTON_PILDORA} ${isActive ? 'btn-light text-primary' : 'btn-outline-light'}`
+}
+
+function ContenidoBoton({ icono, texto }) {
+  return (
+    <>
+      <i className={`bi ${icono} fs-5 lh-1`}></i>
+      <span className="small fw-semibold lh-1 mt-1">{texto}</span>
+    </>
+  )
+}
+
 function Encabezado({ rol, enPortada, alEntrarComoCliente, alCerrarSesion }) {
   const [mostrarAyuda, setMostrarAyuda] = useState(false)
   const esTrabajador = rol === 'trabajador'
+
+  const links = [
+    { destino: '/', icono: 'bi-house-door', texto: 'Inicio' },
+    ...(esTrabajador ? [] : [{ destino: '/oficios', icono: 'bi-search', texto: 'Buscar' }]),
+    esTrabajador
+      ? { destino: '/historial-trabajador', icono: 'bi-clipboard-check', texto: 'Pedidos' }
+      : { destino: '/historial', icono: 'bi-clipboard-check', texto: 'Mis pedidos' },
+    { destino: '/perfil', icono: 'bi-person', texto: 'Mi perfil' },
+  ]
 
   return (
     <>
@@ -33,27 +60,22 @@ function Encabezado({ rol, enPortada, alEntrarComoCliente, alCerrarSesion }) {
               </Nav>
             ) : (
               <>
-                <Nav className="me-auto">
-                  <Nav.Link as={NavLink} to="/" end>
-                    <i className="bi bi-house-door me-1"></i>Página principal
-                  </Nav.Link>
-                  {!esTrabajador && (
-                    <Nav.Link as={NavLink} to="/oficios"><i className="bi bi-search me-1"></i>Buscar</Nav.Link>
-                  )}
-                  <Nav.Link as={NavLink} to={esTrabajador ? '/historial-trabajador' : '/historial'}>
-                    <i className="bi bi-clipboard-check me-1"></i>
-                    {esTrabajador ? 'Pedidos recibidos' : 'Mis pedidos'}
-                  </Nav.Link>
-                  <Nav.Link as={NavLink} to="/perfil"><i className="bi bi-person me-1"></i>Mi perfil</Nav.Link>
-                </Nav>
+                <nav aria-label="Navegación principal" className={`${PILDORA} mx-auto my-2 my-md-0`}>
+                  {links.map((link) => (
+                    <NavLink key={link.destino} to={link.destino} end={link.destino === '/'} className={claseLink}>
+                      <ContenidoBoton icono={link.icono} texto={link.texto} />
+                    </NavLink>
+                  ))}
+                </nav>
 
-                <div className="d-flex gap-2 py-2 py-md-0">
-                  <Button variant="outline-light" size="sm" onClick={() => setMostrarAyuda(true)}>
-                    <i className="bi bi-question-circle me-1"></i>Ayuda
-                  </Button>
-                  <Button variant="warning" size="sm" onClick={alCerrarSesion}>
-                    Cerrar sesión
-                  </Button>
+                {/* Misma píldora para Ayuda y Cerrar sesión; Cerrar sesión va en amarillo para distinguirse */}
+                <div className={`${PILDORA} mb-2 mb-md-0`}>
+                  <button type="button" className={`${BOTON_PILDORA} btn-outline-light`} onClick={() => setMostrarAyuda(true)}>
+                    <ContenidoBoton icono="bi-question-circle" texto="Ayuda" />
+                  </button>
+                  <button type="button" className={`${BOTON_PILDORA} btn-outline-warning`} onClick={alCerrarSesion}>
+                    <ContenidoBoton icono="bi-box-arrow-right" texto="Cerrar sesión" />
+                  </button>
                 </div>
               </>
             )}
