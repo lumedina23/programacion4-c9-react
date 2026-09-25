@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Badge, Button, Card, Col, Container, Form, Row } from 'react-bootstrap'
 import Buscador from '../components/common/Buscador.jsx'
+import MascotaOfiGO from '../components/common/MascotaOfiGO.jsx'
 import TituloSeccion from '../components/common/TituloSeccion.jsx'
 import TarjetaBeneficio from '../components/common/TarjetaBeneficio.jsx'
 import TarjetaCategoria from '../components/common/TarjetaCategoria.jsx'
@@ -30,8 +31,7 @@ const VENTAJAS_PROFESIONAL = ['Recibís pedidos de clientes', 'Los aceptás o re
 
 // Ordenados por calificación (y por cantidad de reseñas si empatan)
 const RANKING = [...PROFESIONALES].sort((a, b) => b.rating - a.rating || b.resenas - a.resenas)
-const MEJOR_CALIFICADO = RANKING[0]
-const DESTACADOS = RANKING.slice(1, 4)
+const DESTACADOS = RANKING.slice(0, 3)
 
 function ListaVentajas({ ventajas }) {
   return (
@@ -91,11 +91,10 @@ function Inicio({ alEntrarComoCliente, alEntrarComoTrabajador }) {
               </p>
             </Col>
 
-            <Col xs={12} lg={5}>
-              <p className="small fw-bold text-secondary text-uppercase mb-3">
-                <i className="bi bi-star-fill text-warning me-1"></i>El mejor calificado
-              </p>
-              <TarjetaProfesional profesional={MEJOR_CALIFICADO} />
+            <Col xs={12} lg={5} className="d-flex justify-content-center">
+              <div className="col-12 col-sm-9 col-md-7 col-lg-12">
+                <MascotaOfiGO alContestar={alEntrarComoCliente} />
+              </div>
             </Col>
           </Row>
         </Container>
