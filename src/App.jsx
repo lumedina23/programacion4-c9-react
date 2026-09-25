@@ -26,7 +26,7 @@ function RutaPerfilTrabajador() {
     return <Navigate to="/oficios" replace />
   }
 
-  return <PerfilTrabajador profesional={profesional} alVolver={() => navegar(-1)} />
+  return <PerfilTrabajador profesional={profesional} alVolver={() => navegar('/oficios')} />
 }
 
 function App() {
@@ -79,9 +79,9 @@ function App() {
             <Route path="/oficios" element={<Oficios />} />
             <Route path="/login" element={<Login />} />
             <Route path="/profesional/:id" element={<RutaPerfilTrabajador />} />
-            <Route path="/crear-pedido" element={<CrearPedido />} />
+            <Route path="/crear-pedido" element={<CrearPedido usuario={usuario} />} />
             <Route path="/historial" element={<Historial />} />
-            <Route path="/historial-trabajador" element={<HistorialTrabajador />} />
+            <Route path="/historial-trabajador" element={<HistorialTrabajador usuario={usuario} />} />
             <Route path="/perfil" element={<Perfil usuario={usuario || undefined} />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>

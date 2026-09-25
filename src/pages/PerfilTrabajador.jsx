@@ -1,4 +1,5 @@
 import { Badge, Button, Col, Container, Row, Stack } from 'react-bootstrap'
+import { Link } from 'react-router-dom'
 import { PROFESIONALES } from '../data/profesionales.js'
 import { formatearPrecio, iniciales } from '../utils/formato.js'
 
@@ -30,7 +31,7 @@ function Estrellas({ rating }) {
 }
 
 function PerfilTrabajador({ profesional = PROFESIONALES[0], alVolver }) {
-  const { nombre, oficio, rating, resenas, distancia, llegada, precio, disponible, tags, zona, descripcion } = profesional
+  const { id, nombre, oficio, rating, resenas, distancia, llegada, precio, disponible, tags, zona, descripcion } = profesional
 
   const resumen = [
     { valor: formatearPrecio(precio), texto: 'por hora', icono: 'bi-cash-coin' },
@@ -107,7 +108,7 @@ function PerfilTrabajador({ profesional = PROFESIONALES[0], alVolver }) {
                 <Button
                   variant="warning"
                   className="w-100 fw-bolder border border-2 border-primary rounded-3 py-2"
-                  disabled={!disponible}
+                  {...(disponible ? { as: Link, to: `/crear-pedido?profesional=${id}` } : { disabled: true })}
                 >
                   <i className="bi bi-person-check me-1"></i>Contratar
                 </Button>
