@@ -60,7 +60,7 @@ function Oficios() {
   }
 
   const opcionesCategoria = [{ nombre: null, icono: 'bi-search', etiqueta: 'Todos' }].concat(
-    CATEGORIAS.map((c) => ({ nombre: c.nombre, icono: c.icono, etiqueta: c.nombre })),
+    CATEGORIAS.map((c) => ({ nombre: c.nombre, icono: c.icono, etiqueta: c.etiqueta || c.nombre })),
   )
 
   function renderResultados() {
