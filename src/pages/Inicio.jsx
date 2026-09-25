@@ -1,11 +1,10 @@
-import { useState } from 'react'
+import { Fragment, useState } from 'react'
 import { Badge, Button, Card, Col, Container, Form, Row } from 'react-bootstrap'
 import Buscador from '../components/common/Buscador.jsx'
 import MascotaOfiGO from '../components/common/MascotaOfiGO.jsx'
 import TituloSeccion from '../components/common/TituloSeccion.jsx'
 import TarjetaBeneficio from '../components/common/TarjetaBeneficio.jsx'
 import TarjetaCategoria from '../components/common/TarjetaCategoria.jsx'
-import TarjetaPaso from '../components/common/TarjetaPaso.jsx'
 import TarjetaProfesional from '../components/common/TarjetaProfesional.jsx'
 import { CATEGORIAS } from '../data/categorias.js'
 import { PROFESIONALES } from '../data/profesionales.js'
@@ -21,9 +20,9 @@ const BENEFICIOS = [
 ]
 
 const PASOS = [
-  { numero: '01', titulo: 'Buscá y compará', texto: 'Filtrá por oficio o escribí lo que necesitás. Mirá precio, distancia y calificación.' },
-  { numero: '02', titulo: 'Enviá tu pedido', texto: 'Contá qué pasa, dónde y cuándo. El pedido le llega al profesional.' },
-  { numero: '03', titulo: 'Seguí el trabajo', texto: 'El profesional lo acepta y lo finaliza. Vos ves cada cambio en Mis pedidos.' },
+  { numero: '01', icono: 'bi-search', titulo: 'Buscá y compará', texto: 'Filtrá por oficio o escribí lo que necesitás. Mirá precio, distancia y calificación.' },
+  { numero: '02', icono: 'bi-chat-dots', titulo: 'Enviá tu pedido', texto: 'Contá qué pasa, dónde y cuándo. El pedido le llega al profesional.' },
+  { numero: '03', icono: 'bi-clipboard-check', titulo: 'Seguí el trabajo', texto: 'El profesional lo acepta y lo finaliza. Vos ves cada cambio en Mis pedidos.' },
 ]
 
 const VENTAJAS_CLIENTE = ['Profesionales de tu zona', 'Precios y calificaciones a la vista', 'Seguís tu pedido paso a paso']
@@ -32,6 +31,26 @@ const VENTAJAS_PROFESIONAL = ['Recibís pedidos de clientes', 'Los aceptás o re
 // Ordenados por calificación (y por cantidad de reseñas si empatan)
 const RANKING = [...PROFESIONALES].sort((a, b) => b.rating - a.rating || b.resenas - a.resenas)
 const DESTACADOS = RANKING.slice(0, 3)
+
+// Un paso de "¿Cómo funciona?": número, ícono en un círculo, título y explicación
+function PasoComoFunciona({ paso }) {
+  return (
+    <div className="d-flex align-items-start gap-3 flex-fill">
+      <div className="position-relative flex-shrink-0">
+        <span className="position-absolute top-0 start-0 translate-middle badge rounded-pill bg-primary">
+          {paso.numero}
+        </span>
+        <div className="bg-white text-primary rounded-circle p-3 lh-1 shadow-sm">
+          <i className={`bi ${paso.icono} fs-3`}></i>
+        </div>
+      </div>
+      <div>
+        <h3 className="h6 fw-bold mb-1">{paso.titulo}</h3>
+        <p className="small text-secondary mb-0">{paso.texto}</p>
+      </div>
+    </div>
+  )
+}
 
 function ListaVentajas({ ventajas }) {
   return (
@@ -100,16 +119,24 @@ function Inicio({ alEntrarComoCliente, alEntrarComoTrabajador }) {
         </Container>
       </section>
 
+      {/* Cómo funciona: los tres pasos en fila, unidos por flechas (en el celular quedan uno debajo del otro) */}
       <section className="py-5">
         <Container>
-          <TituloSeccion titulo="Del problema a la solución, en tres pasos" />
-          <Row xs={1} md={3} className="g-4">
-            {PASOS.map((paso) => (
-              <Col key={paso.numero}>
-                <TarjetaPaso numero={paso.numero} titulo={paso.titulo} texto={paso.texto} />
-              </Col>
-            ))}
-          </Row>
+          <div className="bg-primary-subtle rounded-4 p-4 p-lg-5">
+            <h2 className="h4 fw-bold mb-2">¿Cómo funciona OfiGO?</h2>
+            <div className="bg-primary rounded-pill p-1 col-2 col-md-1 mb-4"></div>
+
+            <div className="d-flex flex-column flex-md-row align-items-md-center gap-4">
+              {PASOS.map((paso, indice) => (
+                <Fragment key={paso.numero}>
+                  {indice > 0 && (
+                    <i className="bi bi-arrow-right text-primary fs-3 d-none d-md-block" aria-hidden="true"></i>
+                  )}
+                  <PasoComoFunciona paso={paso} />
+                </Fragment>
+              ))}
+            </div>
+          </div>
         </Container>
       </section>
 
