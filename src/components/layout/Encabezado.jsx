@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Button, Container, Nav, Navbar } from 'react-bootstrap'
+import { Link, NavLink } from 'react-router-dom'
 import PanelAyuda from './PanelAyuda.jsx'
 import logo from '../../assets/img/hombrelogo.png'
 
@@ -10,7 +11,7 @@ function Encabezado() {
     <>
       <Navbar expand="md" bg="primary" data-bs-theme="dark" sticky="top" className="shadow-sm">
         <Container>
-          <Navbar.Brand href="#" className="d-flex align-items-center gap-2 fw-bold">
+          <Navbar.Brand as={Link} to="/" className="d-flex align-items-center gap-2 fw-bold">
             <img src={logo} alt="" height="40" />
             <span>Ofi<span className="text-warning">GO</span></span>
           </Navbar.Brand>
@@ -19,10 +20,10 @@ function Encabezado() {
 
           <Navbar.Collapse id="menu-principal">
             <Nav className="me-auto">
-              <Nav.Link href="#" active><i className="bi bi-house-door me-1"></i>Inicio</Nav.Link>
-              <Nav.Link href="#"><i className="bi bi-search me-1"></i>Buscar</Nav.Link>
-              <Nav.Link href="#"><i className="bi bi-clipboard-check me-1"></i>Mis pedidos</Nav.Link>
-              <Nav.Link href="#"><i className="bi bi-person me-1"></i>Mi perfil</Nav.Link>
+              <Nav.Link as={NavLink} to="/" end><i className="bi bi-house-door me-1"></i>Inicio</Nav.Link>
+              <Nav.Link as={NavLink} to="/oficios"><i className="bi bi-search me-1"></i>Buscar</Nav.Link>
+              <Nav.Link as={NavLink} to="/historial"><i className="bi bi-clipboard-check me-1"></i>Mis pedidos</Nav.Link>
+              <Nav.Link as={NavLink} to="/perfil"><i className="bi bi-person me-1"></i>Mi perfil</Nav.Link>
             </Nav>
 
             <div className="d-flex gap-2 py-2 py-md-0">
