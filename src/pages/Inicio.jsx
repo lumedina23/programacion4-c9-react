@@ -1,9 +1,11 @@
-import { Fragment, useState } from 'react'
-import { Badge, Button, Card, Col, Container, Form, Row } from 'react-bootstrap'
+import { useState } from 'react'
+import { Badge, Button, Col, Container, Form, Row, ToggleButton } from 'react-bootstrap'
 import Buscador from '../components/common/Buscador.jsx'
+import BotonOfiGO from '../components/common/BotonOfiGO.jsx'
+import ConSombra from '../components/common/ConSombra.jsx'
 import MascotaOfiGO from '../components/common/MascotaOfiGO.jsx'
 import TituloSeccion from '../components/common/TituloSeccion.jsx'
-import TarjetaBeneficio from '../components/common/TarjetaBeneficio.jsx'
+import TarjetaAviso from '../components/common/TarjetaAviso.jsx'
 import TarjetaCategoria from '../components/common/TarjetaCategoria.jsx'
 import TarjetaProfesional from '../components/common/TarjetaProfesional.jsx'
 import { CATEGORIAS } from '../data/categorias.js'
@@ -13,11 +15,6 @@ import { PROFESIONALES } from '../data/profesionales.js'
 
 const POPULARES = ['Plomería', 'Electricidad', 'Pintura', 'Cerrajería']
 
-const BENEFICIOS = [
-  { icono: 'bi-geo-alt', titulo: 'Profesionales de tu zona', texto: 'Ves la distancia y cuánto tardan en llegar.' },
-  { icono: 'bi-star', titulo: 'Calificaciones reales', texto: 'Elegí según las reseñas de otros vecinos.' },
-  { icono: 'bi-clipboard-check', titulo: 'Seguís tu pedido', texto: 'Sabés cuándo lo aceptan y cuándo está terminado.' },
-]
 
 const PASOS = [
   { numero: '01', icono: 'bi-search', titulo: 'Buscá y compará', texto: 'Filtrá por oficio o escribí lo que necesitás. Mirá precio, distancia y calificación.' },
@@ -32,23 +29,56 @@ const VENTAJAS_PROFESIONAL = ['Recibís pedidos de clientes', 'Los aceptás o re
 const RANKING = [...PROFESIONALES].sort((a, b) => b.rating - a.rating || b.resenas - a.resenas)
 const DESTACADOS = RANKING.slice(0, 3)
 
-// Un paso de "¿Cómo funciona?": número, ícono en un círculo, título y explicación
-function PasoComoFunciona({ paso }) {
+// "¿Cómo funciona?": los pasos se eligen como opciones de radio (idea de Uiverse)
+// y a la derecha se muestra la explicación del paso elegido.
+function PasosComoFunciona({ pasos }) {
+  const [elegido, setElegido] = useState(pasos[0].numero)
+  const paso = pasos.find((p) => p.numero === elegido)
+
   return (
-    <div className="d-flex align-items-start gap-3 flex-fill">
-      <div className="position-relative flex-shrink-0">
-        <span className="position-absolute top-0 start-0 translate-middle badge rounded-pill bg-primary">
-          {paso.numero}
-        </span>
-        <div className="bg-white text-primary rounded-circle p-3 lh-1 shadow-sm">
-          <i className={`bi ${paso.icono} fs-3`}></i>
-        </div>
-      </div>
-      <div>
-        <h3 className="h6 fw-bold mb-1">{paso.titulo}</h3>
-        <p className="small text-secondary mb-0">{paso.texto}</p>
-      </div>
-    </div>
+    <Row className="g-4 align-items-stretch">
+      <Col md={5} className="d-flex flex-column gap-3">
+        {pasos.map((opcion) => {
+          const marcado = opcion.numero === elegido
+          return (
+            <ConSombra key={opcion.numero}>
+              <ToggleButton
+                id={`paso-${opcion.numero}`}
+                type="radio"
+                name="pasos-como-funciona"
+                value={opcion.numero}
+                checked={marcado}
+                onChange={() => setElegido(opcion.numero)}
+                variant="light"
+                className={`w-100 d-flex align-items-center gap-3 text-start fw-bold border border-2 border-primary rounded-3 px-3 py-2 ${
+                  marcado ? 'bg-warning text-dark' : 'bg-white text-primary-emphasis'
+                }`}
+              >
+                <i className={`bi ${marcado ? 'bi-record-circle-fill' : 'bi-circle'} text-primary fs-5`}></i>
+                <span>
+                  <span className="small d-block opacity-75">Paso {opcion.numero}</span>
+                  {opcion.titulo}
+                </span>
+              </ToggleButton>
+            </ConSombra>
+          )
+        })}
+      </Col>
+
+      <Col md={7}>
+        <TarjetaEntrada icono={paso.icono} etiqueta={`Paso ${paso.numero}`} fondo="primary-subtle" sombra="warning">
+          <div className="d-flex align-items-center gap-3">
+            <div className="bg-white text-primary border border-2 border-primary rounded-circle p-3 lh-1 flex-shrink-0">
+              <i className={`bi ${paso.icono} fs-3`}></i>
+            </div>
+            <div>
+              <h3 className="h4 fw-bolder text-primary-emphasis mb-2">{paso.titulo}</h3>
+              <p className="fw-semibold mb-0">{paso.texto}</p>
+            </div>
+          </div>
+        </TarjetaEntrada>
+      </Col>
+    </Row>
   )
 }
 
@@ -56,12 +86,27 @@ function ListaVentajas({ ventajas }) {
   return (
     <ul className="list-unstyled mb-4">
       {ventajas.map((ventaja) => (
-        <li key={ventaja} className="mb-2">
-          <i className="bi bi-check-circle-fill text-success me-2"></i>
+        <li key={ventaja} className="mb-2 fw-semibold">
+          <i className="bi bi-check-square-fill text-primary me-2"></i>
           {ventaja}
         </li>
       ))}
     </ul>
+  )
+}
+
+// Tarjeta estilo Uiverse adaptada a los colores de Mi perfil:
+// borde azul grueso, franja blanca de encabezado y sombra dura de color.
+function TarjetaEntrada({ icono, etiqueta, fondo, sombra, children }) {
+  return (
+    <ConSombra color={sombra} redondeo="rounded-4" grosor={2} className="h-100">
+      <div className={`bg-${fondo} border border-3 border-primary rounded-4 overflow-hidden h-100`}>
+        <div className="bg-white border-bottom border-3 border-primary px-4 py-2 fw-bolder small text-primary-emphasis text-uppercase">
+          <i className={`bi ${icono} me-2`}></i>{etiqueta}
+        </div>
+        <div className="p-4 p-lg-5">{children}</div>
+      </div>
+    </ConSombra>
   )
 }
 
@@ -85,10 +130,9 @@ function Inicio({ alEntrarComoCliente, alEntrarComoTrabajador }) {
               <h1 className="display-5 fw-bold mb-3">
                 Encontrá al profesional <span className="text-primary">ideal</span> para tu casa.
               </h1>
-              <p className="lead text-secondary mb-4">
-                Buscá por oficio, compará precios y calificaciones, y pedí el servicio.
-                Después seguí el estado de tu pedido desde un solo lugar.
-              </p>
+              <div className="mb-4">
+                <TarjetaAviso texto="Buscá por oficio, compará precios y calificaciones, y pedí el servicio. Después seguí el estado de tu pedido desde un solo lugar." />
+              </div>
 
               <div className="mb-3">
                 <Buscador placeholder="¿Qué necesitás arreglar? (Ej: plomero)" alBuscar={alEntrarComoCliente} />
@@ -119,24 +163,10 @@ function Inicio({ alEntrarComoCliente, alEntrarComoTrabajador }) {
         </Container>
       </section>
 
-      {/* Cómo funciona: los tres pasos en fila, unidos por flechas (en el celular quedan uno debajo del otro) */}
       <section className="py-5">
         <Container>
-          <div className="bg-primary-subtle rounded-4 p-4 p-lg-5">
-            <h2 className="h4 fw-bold mb-2">¿Cómo funciona OfiGO?</h2>
-            <div className="bg-primary rounded-pill p-1 col-2 col-md-1 mb-4"></div>
-
-            <div className="d-flex flex-column flex-md-row align-items-md-center gap-4">
-              {PASOS.map((paso, indice) => (
-                <Fragment key={paso.numero}>
-                  {indice > 0 && (
-                    <i className="bi bi-arrow-right text-primary fs-3 d-none d-md-block" aria-hidden="true"></i>
-                  )}
-                  <PasoComoFunciona paso={paso} />
-                </Fragment>
-              ))}
-            </div>
-          </div>
+          <TituloSeccion titulo="¿Cómo funciona OfiGO?" />
+          <PasosComoFunciona pasos={PASOS} />
         </Container>
       </section>
 
@@ -173,63 +203,49 @@ function Inicio({ alEntrarComoCliente, alEntrarComoTrabajador }) {
 
       <section className="py-5">
         <Container>
-          <TituloSeccion titulo="¿Por qué OfiGO?" />
-          <Row xs={1} md={3} className="g-4">
-            {BENEFICIOS.map((beneficio) => (
-              <Col key={beneficio.titulo}>
-                <TarjetaBeneficio icono={beneficio.icono} titulo={beneficio.titulo} texto={beneficio.texto} />
-              </Col>
-            ))}
-          </Row>
-        </Container>
-      </section>
-
-      <section className="py-5">
-        <Container>
           <TituloSeccion titulo="Sumate a OfiGO" />
 
           <Row className="g-4">
             <Col xs={12} md={6}>
-              <Card className="h-100 border-0 shadow-sm rounded-4">
-                <Card.Body className="p-4 p-lg-5">
-                  <h3 className="h4 fw-bold">¿Necesitás un arreglo?</h3>
-                  <p className="text-secondary">
-                    Entrá como cliente, buscá entre los profesionales de tu zona y pedí el servicio hoy mismo.
-                  </p>
-                  <ListaVentajas ventajas={VENTAJAS_CLIENTE} />
-                  <Button variant="primary" className="rounded-pill px-4" onClick={alEntrarComoCliente}>
-                    Entrar como cliente
-                  </Button>
-                </Card.Body>
-              </Card>
+              <TarjetaEntrada icono="bi-house-gear" etiqueta="Para clientes" fondo="primary-subtle" sombra="warning">
+                <h3 className="h4 fw-bolder text-primary-emphasis">¿Necesitás un arreglo?</h3>
+                <p className="fw-semibold">
+                  Entrá como cliente, buscá entre los profesionales de tu zona y pedí el servicio hoy mismo.
+                </p>
+                <ListaVentajas ventajas={VENTAJAS_CLIENTE} />
+                <BotonOfiGO onClick={alEntrarComoCliente}>
+                  <i className="bi bi-person me-1"></i>Entrar como cliente
+                </BotonOfiGO>
+              </TarjetaEntrada>
             </Col>
 
             <Col xs={12} md={6} id="ser-profesional">
-              <Card className="h-100 border-0 shadow-sm rounded-4 bg-primary text-white">
-                <Card.Body className="p-4 p-lg-5">
-                  <h3 className="h4 fw-bold">¿Sos profesional?</h3>
-                  <p className="opacity-75">
-                    Mirá los pedidos que te hicieron los clientes y respondelos: aceptalos, rechazalos o marcalos como terminados.
-                  </p>
-                  <ListaVentajas ventajas={VENTAJAS_PROFESIONAL} />
-                  <Form.Group controlId="select-profesional" className="mb-2">
-                    <Form.Label className="small fw-bold">Elegí qué profesional sos</Form.Label>
+              <TarjetaEntrada icono="bi-tools" etiqueta="Para profesionales" fondo="warning-subtle" sombra="primary">
+                <h3 className="h4 fw-bolder text-primary-emphasis">¿Sos profesional?</h3>
+                <p className="fw-semibold">
+                  Mirá los pedidos que te hicieron los clientes y respondelos: aceptalos, rechazalos o marcalos como terminados.
+                </p>
+                <ListaVentajas ventajas={VENTAJAS_PROFESIONAL} />
+                <Form.Group controlId="select-profesional" className="mb-3">
+                  <Form.Label className="fw-bold text-primary-emphasis small mb-1">Elegí qué profesional sos</Form.Label>
+                  <ConSombra>
                     <Form.Select
+                      className="border-2 border-primary rounded-3"
                       value={profesionalElegido}
                       onChange={(evento) => setProfesionalElegido(evento.target.value)}
                     >
                       {PROFESIONALES.map((profesional) => (
                         <option key={profesional.id} value={profesional.id}>
-                          {profesional.nombre} — {profesional.oficio}
+                          {profesional.nombre} · {profesional.oficio}
                         </option>
                       ))}
                     </Form.Select>
-                  </Form.Group>
-                  <Button variant="light" className="rounded-pill px-4" onClick={entrarComoTrabajador}>
-                    Entrar como trabajador
-                  </Button>
-                </Card.Body>
-              </Card>
+                  </ConSombra>
+                </Form.Group>
+                <BotonOfiGO onClick={entrarComoTrabajador}>
+                  <i className="bi bi-briefcase me-1"></i>Entrar como trabajador
+                </BotonOfiGO>
+              </TarjetaEntrada>
             </Col>
           </Row>
         </Container>
