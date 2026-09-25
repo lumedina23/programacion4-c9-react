@@ -1,5 +1,7 @@
 import { useState } from 'react'
-import { Button, Col, Container, Form, InputGroup, Row } from 'react-bootstrap'
+import { Col, Container, Row } from 'react-bootstrap'
+import Buscador from '../components/common/Buscador.jsx'
+import TarjetaCategoria from '../components/common/TarjetaCategoria.jsx'
 import TituloSeccion from '../components/common/TituloSeccion.jsx'
 import TarjetaProfesional from '../components/common/TarjetaProfesional.jsx'
 import { CATEGORIAS } from '../data/categorias.js'
@@ -45,7 +47,6 @@ function ListaProfesionales({ profesionales }) {
 
 function Oficios() {
   const [categoriaActiva, setCategoriaActiva] = useState(null)
-  const [textoIngresado, setTextoIngresado] = useState('')
   const [busquedaActiva, setBusquedaActiva] = useState('')
 
   const resultados = PROFESIONALES.filter(
@@ -54,14 +55,10 @@ function Oficios() {
       (!busquedaActiva || coincideConBusqueda(profesional, busquedaActiva)),
   )
 
-  function buscar(evento) {
-    evento.preventDefault()
-    setBusquedaActiva(textoIngresado.trim())
+  // Tocar la categoría activa la desmarca y vuelve a mostrar todas
+  function seleccionarCategoria(nombre) {
+    setCategoriaActiva(categoriaActiva === nombre ? null : nombre)
   }
-
-  const opcionesCategoria = [{ nombre: null, icono: 'bi-search', etiqueta: 'Todos' }].concat(
-    CATEGORIAS.map((c) => ({ nombre: c.nombre, icono: c.icono, etiqueta: c.etiqueta || c.nombre })),
-  )
 
   function renderResultados() {
     if (resultados.length === 0) {
@@ -100,47 +97,39 @@ function Oficios() {
 
   return (
     <>
-      <section className="bg-white border-bottom py-5">
+      <section className="pt-5">
         <Container>
           <h1 className="h3 fw-bold">Explorar profesionales</h1>
           <p className="text-secondary">Elegí una categoría o buscá directamente lo que necesitás.</p>
 
-          <Form onSubmit={buscar} className="col-lg-7">
-            <InputGroup size="lg">
-              <Form.Control
-                type="search"
-                placeholder="¿Qué servicio necesitás?"
-                aria-label="Servicio a buscar"
-                value={textoIngresado}
-                onChange={(evento) => setTextoIngresado(evento.target.value)}
-              />
-              <Button type="submit" variant="primary">
-                <i className="bi bi-search me-2"></i>Buscar
-              </Button>
-            </InputGroup>
-          </Form>
+          <div className="col-lg-7">
+            <Buscador placeholder="¿Qué servicio necesitás?" alBuscar={(texto) => setBusquedaActiva(texto.trim())} />
+          </div>
         </Container>
       </section>
 
       <Container className="py-5">
-        <Row xs={3} sm={3} md={5} lg={9} className="g-2 mb-5">
-          {opcionesCategoria.map((opcion) => {
-            const activa = categoriaActiva === opcion.nombre
-            return (
-              <Col key={opcion.etiqueta}>
-                <Button
-                  variant={activa ? 'primary' : 'outline-secondary'}
-                  className={`w-100 h-100 d-flex flex-column align-items-center gap-1 py-2 small ${activa ? '' : 'bg-white text-body'}`}
-                  aria-pressed={activa}
-                  onClick={() => setCategoriaActiva(opcion.nombre)}
-                >
-                  <i className={`bi ${opcion.icono} fs-4`}></i>
-                  <span className="small lh-sm">{opcion.etiqueta}</span>
-                </Button>
+        <section className="mb-5">
+          <TituloSeccion
+            titulo="Elegí un oficio"
+            textoEnlace={categoriaActiva ? 'Ver todos' : undefined}
+            alHacerClick={() => setCategoriaActiva(null)}
+          />
+          <Row xs={2} sm={4} className="g-3">
+            {CATEGORIAS.map((categoria) => (
+              <Col key={categoria.nombre}>
+                <TarjetaCategoria
+                  nombre={categoria.etiqueta || categoria.nombre}
+                  icono={categoria.icono}
+                  color={categoria.color}
+                  relleno={categoria.relleno}
+                  activa={categoriaActiva === categoria.nombre}
+                  alSeleccionar={() => seleccionarCategoria(categoria.nombre)}
+                />
               </Col>
-            )
-          })}
-        </Row>
+            ))}
+          </Row>
+        </section>
 
         {renderResultados()}
       </Container>

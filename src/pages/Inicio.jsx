@@ -124,6 +124,7 @@ function Inicio({ alEntrarComoCliente, alEntrarComoTrabajador }) {
                   nombre={categoria.etiqueta || categoria.nombre}
                   icono={categoria.icono}
                   color={categoria.color}
+                  relleno={categoria.relleno}
                 />
               </Col>
             ))}

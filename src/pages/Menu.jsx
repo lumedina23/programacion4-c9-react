@@ -48,7 +48,7 @@ function Menu({ usuario }) {
         <Row xs={2} sm={4} className="g-3">
           {CATEGORIAS_MENU.map((categoria) => (
             <Col key={categoria.nombre}>
-              <TarjetaCategoria nombre={categoria.nombre} icono={categoria.icono} color={categoria.color} />
+              <TarjetaCategoria nombre={categoria.nombre} icono={categoria.icono} color={categoria.color} relleno={categoria.relleno} />
             </Col>
           ))}
         </Row>
