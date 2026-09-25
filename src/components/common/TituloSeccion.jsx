@@ -1,4 +1,11 @@
-function TituloSeccion({ titulo, subtitulo, textoEnlace }) {
+function TituloSeccion({ titulo, subtitulo, textoEnlace, alHacerClick }) {
+  function manejarClick(evento) {
+    if (alHacerClick) {
+      evento.preventDefault()
+      alHacerClick()
+    }
+  }
+
   return (
     <div className="d-flex justify-content-between align-items-end mb-3">
       <div>
@@ -6,7 +13,7 @@ function TituloSeccion({ titulo, subtitulo, textoEnlace }) {
         {subtitulo && <p className="text-secondary mb-0">{subtitulo}</p>}
       </div>
       {textoEnlace && (
-        <a href="#" className="link-primary small fw-semibold text-decoration-none">
+        <a href="#" onClick={manejarClick} className="link-primary small fw-semibold text-decoration-none">
           {textoEnlace}
         </a>
       )}

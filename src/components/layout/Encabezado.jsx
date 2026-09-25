@@ -1,9 +1,10 @@
 import { useState } from 'react'
 import { Button, Container, Nav, Navbar } from 'react-bootstrap'
+import { Link, NavLink } from 'react-router-dom'
 import PanelAyuda from './PanelAyuda.jsx'
 import logo from '../../assets/img/hombrelogo.png'
 
-function Encabezado({ rol, enPortada, alIrAlInicio, alEntrarComoCliente, alCerrarSesion }) {
+function Encabezado({ rol, enPortada, alEntrarComoCliente, alCerrarSesion }) {
   const [mostrarAyuda, setMostrarAyuda] = useState(false)
   const esTrabajador = rol === 'trabajador'
 
@@ -12,10 +13,10 @@ function Encabezado({ rol, enPortada, alIrAlInicio, alEntrarComoCliente, alCerra
       <Navbar expand="md" bg="primary" data-bs-theme="dark" sticky="top" className="shadow-sm">
         <Container>
           <Navbar.Brand
-            href="#"
+            as={Link}
+            to="/"
             className="d-flex align-items-center gap-2 fw-bold fs-3"
             title="Ir a la página principal"
-            onClick={alIrAlInicio}
           >
             <img src={logo} alt="" height="56" />
             <span>Ofi<span className="text-warning">GO</span></span>
@@ -33,17 +34,17 @@ function Encabezado({ rol, enPortada, alIrAlInicio, alEntrarComoCliente, alCerra
             ) : (
               <>
                 <Nav className="me-auto">
-                  <Nav.Link onClick={alIrAlInicio}>
+                  <Nav.Link as={NavLink} to="/" end>
                     <i className="bi bi-house-door me-1"></i>Página principal
                   </Nav.Link>
                   {!esTrabajador && (
-                    <Nav.Link href="#"><i className="bi bi-search me-1"></i>Buscar</Nav.Link>
+                    <Nav.Link as={NavLink} to="/oficios"><i className="bi bi-search me-1"></i>Buscar</Nav.Link>
                   )}
-                  <Nav.Link href="#">
+                  <Nav.Link as={NavLink} to={esTrabajador ? '/historial-trabajador' : '/historial'}>
                     <i className="bi bi-clipboard-check me-1"></i>
                     {esTrabajador ? 'Pedidos recibidos' : 'Mis pedidos'}
                   </Nav.Link>
-                  <Nav.Link href="#"><i className="bi bi-person me-1"></i>Mi perfil</Nav.Link>
+                  <Nav.Link as={NavLink} to="/perfil"><i className="bi bi-person me-1"></i>Mi perfil</Nav.Link>
                 </Nav>
 
                 <div className="d-flex gap-2 py-2 py-md-0">
