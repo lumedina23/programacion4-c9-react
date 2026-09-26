@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { Badge, Button, Col, Container, Form, Row, ToggleButton } from 'react-bootstrap'
 import Buscador from '../components/common/Buscador.jsx'
 import BotonOfiGO from '../components/common/BotonOfiGO.jsx'
@@ -112,6 +113,18 @@ function TarjetaEntrada({ icono, etiqueta, fondo, sombra, children }) {
 
 function Inicio({ alEntrarComoCliente, alEntrarComoTrabajador }) {
   const [profesionalElegido, setProfesionalElegido] = useState(PROFESIONALES[0].id)
+  const navegar = useNavigate()
+
+  // Abre Oficios con esa categoría ya elegida (como oficios.html?categoria=... en el TP1)
+  function irAOficio(nombreCategoria) {
+    navegar(`/oficios?categoria=${encodeURIComponent(nombreCategoria)}`)
+  }
+
+  // Busca en Oficios lo que se escribió (como el formulario del TP1, que iba a oficios.html?buscar=...)
+  function buscarEnOficios(texto) {
+    const busqueda = texto.trim()
+    navegar(busqueda ? `/oficios?buscar=${encodeURIComponent(busqueda)}` : '/oficios')
+  }
 
   function entrarComoTrabajador() {
     const profesional = PROFESIONALES.find((p) => p.id === Number(profesionalElegido))
@@ -135,7 +148,7 @@ function Inicio({ alEntrarComoCliente, alEntrarComoTrabajador }) {
               </div>
 
               <div className="mb-3">
-                <Buscador placeholder="¿Qué necesitás arreglar? (Ej: plomero)" alBuscar={alEntrarComoCliente} />
+                <Buscador placeholder="¿Qué necesitás arreglar? (Ej: plomero)" alBuscar={buscarEnOficios} />
               </div>
 
               <p className="small text-secondary mb-0">
@@ -146,7 +159,7 @@ function Inicio({ alEntrarComoCliente, alEntrarComoTrabajador }) {
                     variant="link"
                     size="sm"
                     className="fw-semibold text-decoration-none"
-                    onClick={alEntrarComoCliente}
+                    onClick={() => irAOficio(categoria)}
                   >
                     {categoria}
                   </Button>
@@ -181,6 +194,7 @@ function Inicio({ alEntrarComoCliente, alEntrarComoTrabajador }) {
                   icono={categoria.icono}
                   color={categoria.color}
                   relleno={categoria.relleno}
+                  alSeleccionar={() => irAOficio(categoria.nombre)}
                 />
               </Col>
             ))}
