@@ -1,4 +1,5 @@
 import { Badge, Col, Container, Row } from 'react-bootstrap'
+import { useNavigate } from 'react-router-dom'
 import Buscador from '../components/common/Buscador.jsx'
 import PanelTrabajador from '../components/common/PanelTrabajador.jsx'
 import TarjetaAviso from '../components/common/TarjetaAviso.jsx'
@@ -14,6 +15,8 @@ const CATEGORIAS_MENU = CATEGORIAS.slice(0, 4)
 const CERCANOS = PROFESIONALES.filter((profesional) => [1, 2].includes(profesional.id))
 
 function Menu({ usuario }) {
+  const navegar = useNavigate()
+
   if (usuario && usuario.rol === 'trabajador') {
     const pendientes = obtenerPedidos().filter(
       (pedido) => pedido.profesionalId === usuario.profesionalId && pedido.estado === 'Pendiente',
@@ -39,7 +42,13 @@ function Menu({ usuario }) {
         </div>
 
         <div className="col-lg-7">
-          <Buscador placeholder="¿Qué servicio necesitás? (Ej: electricista)" />
+          <Buscador
+            placeholder="¿Qué servicio necesitás? (Ej: electricista)"
+            alBuscar={(texto) => {
+              const busqueda = texto.trim()
+              navegar(busqueda ? `/oficios?buscar=${encodeURIComponent(busqueda)}` : '/oficios')
+            }}
+          />
         </div>
       </section>
 
@@ -48,7 +57,13 @@ function Menu({ usuario }) {
         <Row xs={2} sm={4} className="g-3">
           {CATEGORIAS_MENU.map((categoria) => (
             <Col key={categoria.nombre}>
-              <TarjetaCategoria nombre={categoria.nombre} icono={categoria.icono} color={categoria.color} relleno={categoria.relleno} />
+              <TarjetaCategoria
+                nombre={categoria.nombre}
+                icono={categoria.icono}
+                color={categoria.color}
+                relleno={categoria.relleno}
+                alSeleccionar={() => navegar(`/oficios?categoria=${encodeURIComponent(categoria.nombre)}`)}
+              />
             </Col>
           ))}
         </Row>
