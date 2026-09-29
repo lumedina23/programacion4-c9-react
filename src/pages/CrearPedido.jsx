@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Alert, Badge, Button, Card, Col, Container, Form, Row } from 'react-bootstrap'
 import { Link, useSearchParams } from 'react-router-dom'
+import TituloPagina from '../components/common/TituloPagina.jsx'
 import { PROFESIONALES } from '../data/profesionales.js'
 import { iniciales } from '../utils/formato.js'
 import { guardarPedido } from '../utils/sesion.js'
@@ -101,6 +102,7 @@ function CrearPedido({ usuario }) {
   if (!profesional) {
     return (
       <Container className="py-5">
+        <TituloPagina titulo="Pedir servicio · OfiGO" />
         <Row className="justify-content-center">
           <Col sm={11} md={8} lg={6}>
             <Alert variant="warning" className="d-flex flex-column flex-sm-row align-items-sm-center gap-3">
@@ -121,6 +123,7 @@ function CrearPedido({ usuario }) {
 
   return (
     <Container className="py-5">
+      <TituloPagina titulo={`Pedir servicio a ${profesional.nombre} · OfiGO`} />
       <Row className="justify-content-center">
         <Col sm={11} md={8} lg={6}>
           <Link

@@ -4,6 +4,7 @@ import Buscador from '../components/common/Buscador.jsx'
 import TarjetaCategoria from '../components/common/TarjetaCategoria.jsx'
 import TituloSeccion from '../components/common/TituloSeccion.jsx'
 import TarjetaProfesional from '../components/common/TarjetaProfesional.jsx'
+import TituloPagina from '../components/common/TituloPagina.jsx'
 import { CATEGORIAS } from '../data/categorias.js'
 import { PROFESIONALES } from '../data/profesionales.js'
 import { normalizar } from '../utils/formato.js'
@@ -118,6 +119,11 @@ function Oficios() {
 
   return (
     <>
+      <TituloPagina
+        titulo={categoriaActiva ? `${categoriaActiva} · OfiGO` : 'Explorar profesionales · OfiGO'}
+        descripcion="Explorá profesionales de oficios en Tucumán por categoría: plomería, electricidad, pintura, cerrajería y más."
+      />
+
       <section className="pt-5">
         <Container>
           <h1 className="h3 fw-bold">Explorar profesionales</h1>
