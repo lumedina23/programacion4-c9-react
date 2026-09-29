@@ -9,6 +9,7 @@ import TituloSeccion from '../components/common/TituloSeccion.jsx'
 import TarjetaAviso from '../components/common/TarjetaAviso.jsx'
 import TarjetaCategoria from '../components/common/TarjetaCategoria.jsx'
 import TarjetaProfesional from '../components/common/TarjetaProfesional.jsx'
+import TituloPagina from '../components/common/TituloPagina.jsx'
 import { CATEGORIAS } from '../data/categorias.js'
 import { PROFESIONALES } from '../data/profesionales.js'
 
@@ -133,6 +134,11 @@ function Inicio({ alEntrarComoCliente, alEntrarComoTrabajador }) {
 
   return (
     <>
+      <TituloPagina
+        titulo="OfiGO · Oficios en Tucumán"
+        descripcion="Encontrá plomeros, electricistas, pintores y más profesionales de oficios en Tucumán. Compará precios y calificaciones y pedí el servicio."
+      />
+
       <section className="py-5">
         <Container>
           <Row className="align-items-center g-5">

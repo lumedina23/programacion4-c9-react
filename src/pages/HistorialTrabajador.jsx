@@ -1,4 +1,5 @@
 import { Alert, Badge, Card, Col, Container, Row, Stack } from 'react-bootstrap'
+import TituloPagina from '../components/common/TituloPagina.jsx'
 import { obtenerPedidos } from '../utils/sesion.js'
 
 // Bloque 4 - Pedidos recibidos por el trabajador
@@ -43,6 +44,7 @@ function HistorialTrabajador({ usuario }) {
   if (!usuario || usuario.rol !== 'trabajador') {
     return (
       <Container className="py-5">
+        <TituloPagina titulo="Pedidos recibidos · OfiGO" />
         <Alert variant="warning">Para ver los pedidos recibidos, entrá como trabajador desde la portada.</Alert>
       </Container>
     )
@@ -55,6 +57,7 @@ function HistorialTrabajador({ usuario }) {
 
   return (
     <Container className="py-5">
+      <TituloPagina titulo="Pedidos recibidos · OfiGO" />
       <h1 className="h3 fw-bold">Pedidos recibidos</h1>
       <p className="text-secondary mb-4">Las solicitudes que te hicieron los clientes.</p>
 

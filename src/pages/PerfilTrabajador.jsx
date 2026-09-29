@@ -1,5 +1,6 @@
 import { Badge, Button, Col, Container, Form, Row, Stack } from 'react-bootstrap'
 import { Link } from 'react-router-dom'
+import TituloPagina from '../components/common/TituloPagina.jsx'
 import { PROFESIONALES } from '../data/profesionales.js'
 import { formatearPrecio, iniciales } from '../utils/formato.js'
 
@@ -57,6 +58,10 @@ function PerfilTrabajador({ profesional = PROFESIONALES[0], alVolver }) {
 
   return (
     <Container className="py-5">
+      <TituloPagina
+        titulo={`${nombre}, ${oficio} · OfiGO`}
+        descripcion={`${nombre}, ${oficio} en ${zona}, Tucumán. Mirá su precio, calificación y pedile el servicio.`}
+      />
       <Row className="justify-content-center">
         <Col sm={10} md={7} lg={5}>
           <Button variant="link" className="fw-semibold text-decoration-none px-0 mb-3" onClick={alVolver}>
