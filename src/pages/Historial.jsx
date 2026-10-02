@@ -1,4 +1,5 @@
 import { Container } from 'react-bootstrap'
+import TituloPagina from '../components/common/TituloPagina.jsx'
 
 // Bloque 4 - Pedidos del cliente
 // Migrar desde: historial.html (repo del TP1)
@@ -7,6 +8,7 @@ import { Container } from 'react-bootstrap'
 function Historial() {
   return (
     <Container className="py-5">
+      <TituloPagina titulo="Mis pedidos · OfiGO" />
       <h1 className="h3 fw-bold">Mis pedidos</h1>
     </Container>
   )

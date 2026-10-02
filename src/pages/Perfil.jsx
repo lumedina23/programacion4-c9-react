@@ -1,4 +1,5 @@
 import { Badge, Button, Col, Container, Form, Row } from 'react-bootstrap'
+import TituloPagina from '../components/common/TituloPagina.jsx'
 import { iniciales } from '../utils/formato.js'
 
 // Bloque 4 - Perfil del usuario logueado
@@ -29,6 +30,7 @@ function Perfil({ usuario = USUARIO_EJEMPLO }) {
 
   return (
     <Container className="py-5">
+      <TituloPagina titulo="Mi perfil · OfiGO" />
       <Row className="justify-content-center">
         <Col sm={10} md={7} lg={5}>
           <ConSombra redondeo="rounded-4">

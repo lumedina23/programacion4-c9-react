@@ -1,10 +1,12 @@
 import { Badge, Col, Container, Row } from 'react-bootstrap'
+import { useNavigate } from 'react-router-dom'
 import Buscador from '../components/common/Buscador.jsx'
 import PanelTrabajador from '../components/common/PanelTrabajador.jsx'
 import TarjetaAviso from '../components/common/TarjetaAviso.jsx'
 import TituloSeccion from '../components/common/TituloSeccion.jsx'
 import TarjetaCategoria from '../components/common/TarjetaCategoria.jsx'
 import TarjetaProfesional from '../components/common/TarjetaProfesional.jsx'
+import TituloPagina from '../components/common/TituloPagina.jsx'
 import { CATEGORIAS } from '../data/categorias.js'
 import { PROFESIONALES } from '../data/profesionales.js'
 import { obtenerPedidos } from '../utils/sesion.js'
@@ -14,16 +16,28 @@ const CATEGORIAS_MENU = CATEGORIAS.slice(0, 4)
 const CERCANOS = PROFESIONALES.filter((profesional) => [1, 2].includes(profesional.id))
 
 function Menu({ usuario }) {
+  const navegar = useNavigate()
+
   if (usuario && usuario.rol === 'trabajador') {
     const pendientes = obtenerPedidos().filter(
       (pedido) => pedido.profesionalId === usuario.profesionalId && pedido.estado === 'Pendiente',
     ).length
 
-    return <PanelTrabajador nombre={usuario.nombre} calificacion={4.9} pedidosPendientes={pendientes} />
+    return (
+      <>
+        <TituloPagina titulo="Mi panel · OfiGO" />
+        <PanelTrabajador nombre={usuario.nombre} calificacion={4.9} pedidosPendientes={pendientes} />
+      </>
+    )
   }
 
   return (
     <Container className="py-5">
+      <TituloPagina
+        titulo="Inicio · OfiGO"
+        descripcion="Buscá el oficio que necesitás y mirá los profesionales que tenés cerca en Tucumán."
+      />
+
       <section className="mb-5">
         <Badge bg="warning" text="dark" pill className="mb-3 px-4 py-2 fs-6 fw-semibold bg-gradient shadow">
           <i className="bi bi-geo-alt-fill me-1"></i>Tucumán · Disponible ahora
@@ -39,7 +53,13 @@ function Menu({ usuario }) {
         </div>
 
         <div className="col-lg-7">
-          <Buscador placeholder="¿Qué servicio necesitás? (Ej: electricista)" />
+          <Buscador
+            placeholder="¿Qué servicio necesitás? (Ej: electricista)"
+            alBuscar={(texto) => {
+              const busqueda = texto.trim()
+              navegar(busqueda ? `/oficios?buscar=${encodeURIComponent(busqueda)}` : '/oficios')
+            }}
+          />
         </div>
       </section>
 
@@ -48,7 +68,13 @@ function Menu({ usuario }) {
         <Row xs={2} sm={4} className="g-3">
           {CATEGORIAS_MENU.map((categoria) => (
             <Col key={categoria.nombre}>
-              <TarjetaCategoria nombre={categoria.nombre} icono={categoria.icono} color={categoria.color} relleno={categoria.relleno} />
+              <TarjetaCategoria
+                nombre={categoria.nombre}
+                icono={categoria.icono}
+                color={categoria.color}
+                relleno={categoria.relleno}
+                alSeleccionar={() => navegar(`/oficios?categoria=${encodeURIComponent(categoria.nombre)}`)}
+              />
             </Col>
           ))}
         </Row>

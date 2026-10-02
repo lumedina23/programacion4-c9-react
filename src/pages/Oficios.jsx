@@ -1,9 +1,10 @@
-import { useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { Col, Container, Row } from 'react-bootstrap'
 import Buscador from '../components/common/Buscador.jsx'
 import TarjetaCategoria from '../components/common/TarjetaCategoria.jsx'
 import TituloSeccion from '../components/common/TituloSeccion.jsx'
 import TarjetaProfesional from '../components/common/TarjetaProfesional.jsx'
+import TituloPagina from '../components/common/TituloPagina.jsx'
 import { CATEGORIAS } from '../data/categorias.js'
 import { PROFESIONALES } from '../data/profesionales.js'
 import { normalizar } from '../utils/formato.js'
@@ -46,8 +47,29 @@ function ListaProfesionales({ profesionales }) {
 }
 
 function Oficios() {
-  const [categoriaActiva, setCategoriaActiva] = useState(null)
-  const [busquedaActiva, setBusquedaActiva] = useState('')
+  // La categoría y la búsqueda se guardan en la dirección (como en el TP1: oficios.html?categoria=Plomería),
+  // así otras páginas pueden abrir Oficios con un oficio ya elegido: /oficios?categoria=Plomería
+  const [parametros, setParametros] = useSearchParams()
+  const categoriaActiva = parametros.get('categoria')
+  const busquedaActiva = parametros.get('buscar') || ''
+
+  function actualizarParametro(clave, valor) {
+    const nuevos = new URLSearchParams(parametros)
+    if (valor) {
+      nuevos.set(clave, valor)
+    } else {
+      nuevos.delete(clave)
+    }
+    setParametros(nuevos)
+  }
+
+  function setCategoriaActiva(nombre) {
+    actualizarParametro('categoria', nombre)
+  }
+
+  function setBusquedaActiva(texto) {
+    actualizarParametro('buscar', texto)
+  }
 
   const resultados = PROFESIONALES.filter(
     (profesional) =>
@@ -97,13 +119,23 @@ function Oficios() {
 
   return (
     <>
+      <TituloPagina
+        titulo={categoriaActiva ? `${categoriaActiva} · OfiGO` : 'Explorar profesionales · OfiGO'}
+        descripcion="Explorá profesionales de oficios en Tucumán por categoría: plomería, electricidad, pintura, cerrajería y más."
+      />
+
       <section className="pt-5">
         <Container>
           <h1 className="h3 fw-bold">Explorar profesionales</h1>
           <p className="text-secondary">Elegí una categoría o buscá directamente lo que necesitás.</p>
 
           <div className="col-lg-7">
-            <Buscador placeholder="¿Qué servicio necesitás?" alBuscar={(texto) => setBusquedaActiva(texto.trim())} />
+            <Buscador
+              key={busquedaActiva}
+              placeholder="¿Qué servicio necesitás?"
+              valorInicial={busquedaActiva}
+              alBuscar={(texto) => setBusquedaActiva(texto.trim())}
+            />
           </div>
         </Container>
       </section>
