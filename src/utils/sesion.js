@@ -39,3 +39,10 @@ export function guardarPedido(datos) {
   localStorage.setItem(CLAVE_PEDIDOS, JSON.stringify([...obtenerPedidos(), pedido]))
   return pedido
 }
+
+// Cambia algunos datos de un pedido ya guardado (por ejemplo su calificación) y devuelve la lista nueva
+export function actualizarPedido(id, cambios) {
+  const pedidos = obtenerPedidos().map((pedido) => (pedido.id === id ? { ...pedido, ...cambios } : pedido))
+  localStorage.setItem(CLAVE_PEDIDOS, JSON.stringify(pedidos))
+  return pedidos
+}
