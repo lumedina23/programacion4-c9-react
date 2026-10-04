@@ -30,7 +30,7 @@ La interfaz se reorganizó en **páginas** y **componentes reutilizables** que s
 * **Perfil del profesional:** calificación con estrellas, precio por hora, distancia, zona, especialidades y botón para contratar.
 * **Pedir un servicio:** formulario con dirección, fecha y descripción del problema, con validación de los campos. El pedido se guarda en el navegador.
 * **Mis pedidos:** el cliente ve sus pedidos con su estado y califica con estrellas y un comentario los trabajos finalizados.
-* **Pedidos recibidos:** lista de los pedidos del profesional con su estado.
+* **Pedidos recibidos:** el profesional ve cuántos pedidos tiene pendientes, en marcha y finalizados, y avanza cada uno: los acepta, los empieza, los marca como finalizados o los rechaza. También ve la calificación que le dejó el cliente.
 * **Mi perfil:** datos de la cuenta y cierre de sesión.
 * **Centro de ayuda:** preguntas frecuentes con buscador y datos de contacto.
 
@@ -131,7 +131,7 @@ src/
 | Explorar profesionales | `Oficios.jsx` | `/oficios` | `oficios.html` |
 | Perfil del profesional | `PerfilTrabajador.jsx` | `/profesional/:id` | `perfiltrabajador.html` |
 | Pedir servicio | `CrearPedido.jsx` | `/crear-pedido` | `crearpedido.html` |
-| Pedidos recibidos | `HistorialTrabajador.jsx` | `/historial-trabajador` | `historialtrabajador.html` |
+| Pedidos recibidos | `HistorialTrabajador.jsx` | `/historial-trabajador` | `historial-trabajador.html` |
 | Mi perfil | `Perfil.jsx` | `/perfil` | `perfil.html` |
 | Ingresar | `Login.jsx` | `/login` | `login.html` (en proceso) |
 | Mis pedidos | `Historial.jsx` | `/historial` | `historial.html` |
@@ -150,10 +150,10 @@ Cada parte que se repite se separó en un componente que recibe los datos por **
 | `TituloSeccion` | `titulo`, `subtitulo`, `textoEnlace`, `destino` | Todas las secciones |
 | `TarjetaAviso` | `titulo`, `texto` | Portada, Menú |
 | `PanelTrabajador` | `nombre`, `calificacion`, `pedidosPendientes` | Menú (vista del trabajador) |
-| `TarjetaPedido` | `pedido`, `titulo` y lo que va abajo como `children` | Mis pedidos |
+| `TarjetaPedido` | `pedido`, `titulo` y lo que va abajo como `children` | Mis pedidos, Pedidos recibidos |
 | `TituloPagina` | `titulo`, `descripcion` | Todas las páginas (SEO) |
-| `ConSombra` | `color`, `redondeo`, `grosor` | Portada, Mis pedidos |
-| `BotonOfiGO` | `onClick` y el texto del botón | Portada, Mis pedidos |
+| `ConSombra` | `color`, `redondeo`, `grosor` | Portada, Mis pedidos, Pedidos recibidos |
+| `BotonOfiGO` | `onClick` y el texto del botón | Portada, Mis pedidos, Pedidos recibidos |
 | `Encabezado` | `rol`, `enPortada`, `alEntrarComoCliente`, `alCerrarSesion` | Todas las páginas |
 | `PanelAyuda` | `mostrar`, `alCerrar` | Todas las páginas |
 
