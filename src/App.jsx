@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import FondoHerramientas from './components/common/FondoHerramientas.jsx'
 import Encabezado from './components/layout/Encabezado.jsx'
@@ -12,9 +12,23 @@ function App() {
   const navegar = useNavigate()
   const { pathname } = useLocation()
 
+  // Cada vez que cambia el usuario, la sesión guardada en localStorage se actualiza sola:
+  // si hay usuario se guarda, si no (cliente o cerró sesión) se borra
+  useEffect(() => {
+    if (usuario) {
+      guardarSesion(usuario)
+    } else {
+      borrarSesion()
+    }
+  }, [usuario])
+  // Al pasar a otra página se vuelve arriba de todo; si no, la página nueva
+  // se abriría a la misma altura en la que estaba la anterior.
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'instant' })
+  }, [pathname])
+
   // Igual que en el TP1: entrar como cliente borra cualquier sesión guardada
   function entrarComoCliente() {
-    borrarSesion()
     setUsuario(null)
     navegar('/menu')
   }
@@ -26,13 +40,11 @@ function App() {
       rol: 'trabajador',
       profesionalId: profesional.id,
     }
-    guardarSesion(sesion)
     setUsuario(sesion)
     navegar('/menu')
   }
 
   function cerrarSesion() {
-    borrarSesion()
     setUsuario(null)
     navegar('/')
   }

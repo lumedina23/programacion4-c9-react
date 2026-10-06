@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect,useState } from 'react'
 import { Alert, Button, Col, Container, Form, Modal, Row } from 'react-bootstrap'
 import { Link } from 'react-router-dom'
 import BotonOfiGO from '../components/common/BotonOfiGO.jsx'
@@ -117,11 +117,16 @@ function ModalCalificar({ pedido, alCerrar, alEnviar }) {
     </Modal>
   )
 }
-
 function Historial() {
   // Los más nuevos primero
   const [pedidos, setPedidos] = useState(() => obtenerPedidos().reverse())
   const [pedidoACalificar, setPedidoACalificar] = useState(null)
+
+  // Al abrir la página empieza a escuchar los cambios de otras pestañas: si el trabajador acepta
+  // o finaliza un pedido, el estado se actualiza acá sin recargar. Al salir de la página deja de escuchar.
+  useEffect(() => {
+    return escucharPedidos((lista) => setPedidos(lista.reverse()))
+  }, [])
 
   function guardarCalificacion(calificacion) {
     setPedidos(actualizarPedido(pedidoACalificar.id, { calificacion }).reverse())
@@ -173,5 +178,6 @@ function Historial() {
     </Container>
   )
 }
+
 
 export default Historial

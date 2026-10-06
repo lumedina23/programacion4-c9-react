@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect,useState } from 'react'
 import { Badge, Button, Col, Container, Row, Stack } from 'react-bootstrap'
 import { Link } from 'react-router-dom'
 import BotonOfiGO from '../components/common/BotonOfiGO.jsx'
@@ -111,21 +111,21 @@ function AccionesPedido({ pedido, alCambiarEstado }) {
 }
 
 function HistorialTrabajador({ usuario }) {
-  const esTrabajador = usuario && usuario.rol === 'trabajador'
+  const [pedidos, setPedidos] = useState(() => pedidosDelTrabajador(obtenerPedidos(), usuario))
 
-  // Solo los pedidos que le hicieron a este profesional, los más nuevos primero
-  function pedidosDelTrabajador(lista) {
-    return lista.filter((pedido) => esTrabajador && pedido.profesionalId === usuario.profesionalId).reverse()
-  }
-
-  const [pedidos, setPedidos] = useState(() => pedidosDelTrabajador(obtenerPedidos()))
+  // Al abrir la página empieza a escuchar los cambios de otras pestañas: si un cliente hace un pedido
+  // o califica un trabajo, aparece acá sin recargar. Depende del usuario porque con él se filtran
+  // los pedidos; al salir de la página (o si cambia el usuario) deja de escuchar.
+  useEffect(() => {
+    return escucharPedidos((lista) => setPedidos(pedidosDelTrabajador(lista, usuario)))
+  }, [usuario])
 
   function cambiarEstado(id, estado) {
-    setPedidos(pedidosDelTrabajador(actualizarPedido(id, { estado })))
+    setPedidos(pedidosDelTrabajador(actualizarPedido(id, { estado }), usuario))
   }
 
   // Como en el TP1: esta página es solo para trabajadores
-  if (!esTrabajador) {
+  if (!esTrabajador(usuario)) {
     return (
       <Container className="py-5">
         <TituloPagina titulo="Pedidos recibidos · OfiGO" />

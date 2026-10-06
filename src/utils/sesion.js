@@ -1,6 +1,7 @@
 // Mismas claves que usaba el TP1 para guardar datos en localStorage
 const CLAVE_SESION = 'oficioya-sesion'
 const CLAVE_PEDIDOS = 'oficioya-pedidos'
+const CLAVE_GUARDADOS = 'oficioya-guardados'
 
 export function obtenerSesion() {
   const sesion = localStorage.getItem(CLAVE_SESION)
@@ -45,4 +46,19 @@ export function actualizarPedido(id, cambios) {
   const pedidos = obtenerPedidos().map((pedido) => (pedido.id === id ? { ...pedido, ...cambios } : pedido))
   localStorage.setItem(CLAVE_PEDIDOS, JSON.stringify(pedidos))
   return pedidos
+}
+
+// Ids de los profesionales que el usuario marcó como guardados
+export function obtenerGuardados() {
+  try {
+    return JSON.parse(localStorage.getItem(CLAVE_GUARDADOS)) || []
+  } catch {
+    return []
+  }
+}
+
+// Agrega o quita un profesional de la lista de guardados
+export function marcarGuardado(id, guardado) {
+  const sinEste = obtenerGuardados().filter((idGuardado) => idGuardado !== id)
+  localStorage.setItem(CLAVE_GUARDADOS, JSON.stringify(guardado ? [...sinEste, id] : sinEste))
 }

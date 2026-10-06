@@ -1,12 +1,19 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Badge, Button, Card } from 'react-bootstrap'
 import { Link } from 'react-router-dom'
 import { CATEGORIAS } from '../../data/categorias.js'
 import { formatearPrecio, iniciales } from '../../utils/formato.js'
+import { marcarGuardado, obtenerGuardados } from '../../utils/sesion.js'
 
 function TarjetaProfesional({ profesional }) {
   const { id, nombre, oficio, categoria, rating, resenas, distancia, precio, disponible } = profesional
-  const [guardado, setGuardado] = useState(false)
+  // Arranca marcado si el profesional ya estaba guardado de antes
+  const [guardado, setGuardado] = useState(() => obtenerGuardados().includes(id))
+
+  // Cada vez que cambia "guardado" se anota en localStorage, así no se pierde al recargar o cambiar de página
+  useEffect(() => {
+    marcarGuardado(id, guardado)
+  }, [id, guardado])
 
   const datosCategoria = CATEGORIAS.find((cat) => cat.nombre === categoria)
   const color = datosCategoria ? datosCategoria.color : 'primary'
