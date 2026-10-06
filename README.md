@@ -29,7 +29,8 @@ La interfaz se reorganizó en **páginas** y **componentes reutilizables** que s
 * **Explorar profesionales:** filtro por oficio y búsqueda por texto (nombre, oficio o especialidad).
 * **Perfil del profesional:** calificación con estrellas, precio por hora, distancia, zona, especialidades y botón para contratar.
 * **Pedir un servicio:** formulario con dirección, fecha y descripción del problema, con validación de los campos. El pedido se guarda en el navegador.
-* **Pedidos recibidos:** lista de los pedidos del profesional con su estado.
+* **Mis pedidos:** el cliente ve sus pedidos con su estado y califica con estrellas y un comentario los trabajos finalizados.
+* **Pedidos recibidos:** el profesional ve cuántos pedidos tiene pendientes, en marcha y finalizados, y avanza cada uno: los acepta, los empieza, los marca como finalizados o los rechaza. También ve la calificación que le dejó el cliente.
 * **Mi perfil:** datos de la cuenta y cierre de sesión.
 * **Centro de ayuda:** preguntas frecuentes con buscador y datos de contacto.
 
@@ -43,19 +44,23 @@ La interfaz se reorganizó en **páginas** y **componentes reutilizables** que s
 * **localStorage** – Para guardar la sesión y los pedidos, igual que en el TP1.
 * **Vercel** – Para el deploy.
 
-  ## 🔎 SEO
+## 🔎 SEO
 
 Aplicamos buenas prácticas de **SEO** para que los buscadores entiendan de qué trata el sitio y cómo está organizado.
 
 ### Qué aplicamos
 
 * **Atributo `lang="es"`** en `index.html`: indica que el contenido está en español.
-* **Etiqueta `<title>`**: el título que se ve en la pestaña y en los resultados de búsqueda.
-* **Meta description**: una descripción breve del sitio para los buscadores.
+* **Un `<title>` y una meta description por página**: cada página usa el componente `TituloPagina`, que recibe el título y la descripción por props. Así la pestaña del navegador y los resultados de búsqueda muestran algo distinto en cada página (por ejemplo "Explorar profesionales · OfiGO" o "Mis pedidos · OfiGO"). En Oficios y en el perfil del profesional el título cambia según el oficio o el profesional elegido.
 
-  ```html
-  <meta name="description" content="OfiGO: encontrá profesionales de oficios cerca tuyo en Tucumán o recibí pedidos de clientes." />
+  ```jsx
+  <TituloPagina
+    titulo="Mis pedidos · OfiGO"
+    descripcion="Seguí el estado de los pedidos que les hiciste a los profesionales y calificá los trabajos terminados."
+  />
   ```
+
+  React 19 lleva solo estas etiquetas al `<head>` del documento.
 
 * **Meta viewport**: para que la página se adapte a celulares, algo que los buscadores tienen en cuenta.
 * **Etiquetas semánticas**: `<nav>` (lo genera el `Navbar` de React Bootstrap), `<main>`, `<section>`, `<article>` y `<footer>`, para organizar el contenido.
@@ -126,10 +131,10 @@ src/
 | Explorar profesionales | `Oficios.jsx` | `/oficios` | `oficios.html` |
 | Perfil del profesional | `PerfilTrabajador.jsx` | `/profesional/:id` | `perfiltrabajador.html` |
 | Pedir servicio | `CrearPedido.jsx` | `/crear-pedido` | `crearpedido.html` |
-| Pedidos recibidos | `HistorialTrabajador.jsx` | `/historial-trabajador` | `historialtrabajador.html` |
+| Pedidos recibidos | `HistorialTrabajador.jsx` | `/historial-trabajador` | `historial-trabajador.html` |
 | Mi perfil | `Perfil.jsx` | `/perfil` | `perfil.html` |
 | Ingresar | `Login.jsx` | `/login` | `login.html` (en proceso) |
-| Mis pedidos | `Historial.jsx` | `/historial` | `historial.html` (en proceso) |
+| Mis pedidos | `Historial.jsx` | `/historial` | `historial.html` |
 
 ---
 
@@ -145,8 +150,10 @@ Cada parte que se repite se separó en un componente que recibe los datos por **
 | `TituloSeccion` | `titulo`, `subtitulo`, `textoEnlace`, `destino` | Todas las secciones |
 | `TarjetaAviso` | `titulo`, `texto` | Portada, Menú |
 | `PanelTrabajador` | `nombre`, `calificacion`, `pedidosPendientes` | Menú (vista del trabajador) |
-| `ConSombra` | `color`, `redondeo`, `grosor` | Portada (estilo de los perfiles) |
-| `BotonOfiGO` | `onClick` y el texto del botón | Portada |
+| `TarjetaPedido` | `pedido`, `titulo` y lo que va abajo como `children` | Mis pedidos, Pedidos recibidos |
+| `TituloPagina` | `titulo`, `descripcion` | Todas las páginas (SEO) |
+| `ConSombra` | `color`, `redondeo`, `grosor` | Portada, Mis pedidos, Pedidos recibidos |
+| `BotonOfiGO` | `onClick` y el texto del botón | Portada, Mis pedidos, Pedidos recibidos |
 | `Encabezado` | `rol`, `enPortada`, `alEntrarComoCliente`, `alCerrarSesion` | Todas las páginas |
 | `PanelAyuda` | `mostrar`, `alCerrar` | Todas las páginas |
 
@@ -166,14 +173,25 @@ Las listas no se escriben a mano: se generan con `map()` a partir de los datos d
 ))}
 ```
 
-Se usa, entre otros lugares, para las categorías, los profesionales, los pasos de "Cómo funciona", las preguntas del centro de ayuda y las especialidades de cada profesional.
+Se usa, entre otros lugares, para las categorías, los profesionales, los pasos de "Cómo funciona", los pedidos, las estrellas de la calificación, las preguntas del centro de ayuda y las especialidades de cada profesional.
 
+## 🧭 Navegación con React Router
 
-### Mejoras pendientes
+La navegación entre páginas se hace con **React Router**, sin recargar la página:
 
-* Que cada página tenga su propio `<title>` (por ejemplo "Explorar profesionales · OfiGO"). React 19 permite escribir `<title>` dentro de cada página.
+* `BrowserRouter` (en `main.jsx`) envuelve toda la aplicación.
+* `Routes` y `Route` (en `App.jsx`) definen qué página se muestra en cada dirección (ver la tabla de Páginas).
+* `Link` y `NavLink` reemplazan a los `<a href>` del TP1. `NavLink` marca en el menú la página en la que está el usuario.
+* `useNavigate` lleva a otra página desde el código, por ejemplo al entrar como cliente o al buscar.
+* `useParams` lee el id del profesional en `/profesional/:id`.
+* `useSearchParams` lee y guarda en la dirección el oficio elegido y lo buscado (`/oficios?categoria=Plomería`), igual que el TP1 con `oficios.html?categoria=...`.
+* Una ruta comodín (`*`) devuelve a la portada si la dirección no existe.
+
+## 🚧 Mejoras pendientes
+
 * Agregar etiquetas **Open Graph** (`og:title`, `og:description`, `og:image`) para que el link se vea con imagen y descripción al compartirlo por WhatsApp o redes.
 * Completar el texto alternativo (`alt`) del logo.
 
+## 🌿 Forma de trabajo
 
 Cada integrante trabaja en su rama y sube los cambios mediante **Pull Request** hacia `dev`. Cuando `dev` está estable, se pasa a `main`.
