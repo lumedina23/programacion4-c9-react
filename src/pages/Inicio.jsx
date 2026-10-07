@@ -1,6 +1,6 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { Badge, Button, Col, Container, Form, Row, ToggleButton } from 'react-bootstrap'
+import { Link, useNavigate } from 'react-router-dom'
+import { Badge, Button, CloseButton, Col, Container, Form, Row } from 'react-bootstrap'
 import Buscador from '../components/common/Buscador.jsx'
 import BotonOfiGO from '../components/common/BotonOfiGO.jsx'
 import ConSombra from '../components/common/ConSombra.jsx'
@@ -13,74 +13,106 @@ import TituloPagina from '../components/common/TituloPagina.jsx'
 import { CATEGORIAS } from '../data/categorias.js'
 import { PROFESIONALES } from '../data/profesionales.js'
 
-// Migrado desde index.html (portada) del TP1
 
 const POPULARES = ['Plomería', 'Electricidad', 'Pintura', 'Cerrajería']
 
 
 const PASOS = [
-  { numero: '01', icono: 'bi-search', titulo: 'Buscá y compará', texto: 'Filtrá por oficio o escribí lo que necesitás. Mirá precio, distancia y calificación.' },
-  { numero: '02', icono: 'bi-chat-dots', titulo: 'Enviá tu pedido', texto: 'Contá qué pasa, dónde y cuándo. El pedido le llega al profesional.' },
-  { numero: '03', icono: 'bi-clipboard-check', titulo: 'Seguí el trabajo', texto: 'El profesional lo acepta y lo finaliza. Vos ves cada cambio en Mis pedidos.' },
+  {
+    numero: '01',
+    icono: 'bi-search',
+    titulo: 'Buscá y compará profesionales',
+    texto: 'Filtrá por oficio o escribí lo que necesitás. Mirá precio, distancia y calificación.',
+    enlace: 'Ver oficios',
+    destino: '/oficios',
+    fondo: 'primary',
+  },
+  {
+    numero: '02',
+    icono: 'bi-chat-dots',
+    titulo: 'Pedí el servicio en minutos',
+    texto: 'Contá qué pasa, dónde y cuándo. El pedido le llega al profesional.',
+    enlace: 'Elegir profesional',
+    destino: '/oficios',
+    fondo: 'warning',
+  },
+  {
+    numero: '03',
+    icono: 'bi-clipboard-check',
+    titulo: 'Seguí tu pedido paso a paso',
+    texto: 'El profesional lo acepta y lo finaliza. Vos ves cada cambio en Mis pedidos.',
+    enlace: 'Ver mis pedidos',
+    destino: '/historial',
+    fondo: 'primary-subtle',
+  },
 ]
 
 const VENTAJAS_CLIENTE = ['Profesionales de tu zona', 'Precios y calificaciones a la vista', 'Seguís tu pedido paso a paso']
 const VENTAJAS_PROFESIONAL = ['Recibís pedidos de clientes', 'Los aceptás o rechazás', 'Marcás los trabajos terminados']
 
-// Ordenados por calificación (y por cantidad de reseñas si empatan)
 const RANKING = [...PROFESIONALES].sort((a, b) => b.rating - a.rating || b.resenas - a.resenas)
 const DESTACADOS = RANKING.slice(0, 3)
 
-// "¿Cómo funciona?": los pasos se eligen como opciones de radio (idea de Uiverse)
-// y a la derecha se muestra la explicación del paso elegido.
-function PasosComoFunciona({ pasos }) {
-  const [elegido, setElegido] = useState(pasos[0].numero)
-  const paso = pasos.find((p) => p.numero === elegido)
+const ALTO_ENCABEZADO = 96
+const SEPARACION_TARJETAS = 20
+
+function TarjetaComoFunciona({ paso, posicion, alCerrar }) {
+  const oscura = paso.fondo === 'primary'
 
   return (
-    <Row className="g-4 align-items-stretch">
-      <Col md={5} className="d-flex flex-column gap-3">
-        {pasos.map((opcion) => {
-          const marcado = opcion.numero === elegido
-          return (
-            <ConSombra key={opcion.numero}>
-              <ToggleButton
-                id={`paso-${opcion.numero}`}
-                type="radio"
-                name="pasos-como-funciona"
-                value={opcion.numero}
-                checked={marcado}
-                onChange={() => setElegido(opcion.numero)}
-                variant="light"
-                className={`w-100 d-flex align-items-center gap-3 text-start fw-bold border border-2 border-primary rounded-3 px-3 py-2 ${
-                  marcado ? 'bg-warning text-dark' : 'bg-white text-primary-emphasis'
-                }`}
-              >
-                <i className={`bi ${marcado ? 'bi-record-circle-fill' : 'bi-circle'} text-primary fs-5`}></i>
-                <span>
-                  <span className="small d-block opacity-75">Paso {opcion.numero}</span>
-                  {opcion.titulo}
-                </span>
-              </ToggleButton>
-            </ConSombra>
-          )
-        })}
-      </Col>
+    <article
+      className={`bg-${paso.fondo} ${oscura ? 'text-white' : 'text-primary-emphasis'} position-sticky overflow-hidden rounded-4 shadow mb-4`}
+      style={{ top: ALTO_ENCABEZADO + posicion * SEPARACION_TARJETAS }}
+    >
+      <div className="position-absolute top-0 end-0 m-2 m-sm-3 bg-black bg-opacity-10 rounded-3 p-2 lh-1">
+        <CloseButton variant={oscura ? 'white' : undefined} aria-label={`Cerrar "${paso.titulo}"`} onClick={alCerrar} />
+      </div>
 
-      <Col md={7}>
-        <TarjetaEntrada icono={paso.icono} etiqueta={`Paso ${paso.numero}`} fondo="primary-subtle" sombra="warning">
-          <div className="d-flex align-items-center gap-3">
-            <div className="bg-white text-primary border border-2 border-primary rounded-circle p-3 lh-1 flex-shrink-0">
-              <i className={`bi ${paso.icono} fs-3`}></i>
-            </div>
-            <div>
-              <h3 className="h4 fw-bolder text-primary-emphasis mb-2">{paso.titulo}</h3>
-              <p className="fw-semibold mb-0">{paso.texto}</p>
+      <Row className="g-0 align-items-center">
+        <Col xs={8} className="p-4">
+          <span className="small fw-bold text-uppercase opacity-75">Paso {paso.numero}</span>
+          <h3 className="h4 fw-bold lh-sm mt-1 mb-2">{paso.titulo}</h3>
+          <p className="small fw-semibold opacity-75 mb-3">{paso.texto}</p>
+          <Link to={paso.destino} className="fw-bold text-reset text-decoration-none">
+            {paso.enlace} <i className="bi bi-arrow-right ms-1"></i>
+          </Link>
+        </Col>
+
+        <Col xs={4} className="pe-4 pt-5 pb-4">
+          <div className="col-lg-9 mx-auto">
+            <div className="ratio ratio-1x1">
+              <div className="bg-white bg-opacity-25 rounded-circle d-flex align-items-center justify-content-center">
+                <i className={`bi ${paso.icono} display-4`} aria-hidden="true"></i>
+              </div>
             </div>
           </div>
-        </TarjetaEntrada>
-      </Col>
-    </Row>
+        </Col>
+      </Row>
+    </article>
+  )
+}
+
+function PasosComoFunciona({ pasos }) {
+  const [cerrados, setCerrados] = useState([])
+  const visibles = pasos.filter((paso) => !cerrados.includes(paso.numero))
+
+  return (
+    <div className="col-lg-8 mx-auto">
+      {visibles.length === 0 ? (
+        <Button variant="link" className="fw-semibold text-decoration-none p-0" onClick={() => setCerrados([])}>
+          <i className="bi bi-arrow-counterclockwise me-1"></i>Volver a ver los pasos
+        </Button>
+      ) : (
+        visibles.map((paso, posicion) => (
+          <TarjetaComoFunciona
+            key={paso.numero}
+            paso={paso}
+            posicion={posicion}
+            alCerrar={() => setCerrados([...cerrados, paso.numero])}
+          />
+        ))
+      )}
+    </div>
   )
 }
 
@@ -97,8 +129,6 @@ function ListaVentajas({ ventajas }) {
   )
 }
 
-// Tarjeta estilo Uiverse adaptada a los colores de Mi perfil:
-// borde azul grueso, franja blanca de encabezado y sombra dura de color.
 function TarjetaEntrada({ icono, etiqueta, fondo, sombra, children }) {
   return (
     <ConSombra color={sombra} redondeo="rounded-4" grosor={2} className="h-100">
@@ -116,12 +146,10 @@ function Inicio({ alEntrarComoCliente, alEntrarComoTrabajador }) {
   const [profesionalElegido, setProfesionalElegido] = useState(PROFESIONALES[0].id)
   const navegar = useNavigate()
 
-  // Abre Oficios con esa categoría ya elegida (como oficios.html?categoria=... en el TP1)
   function irAOficio(nombreCategoria) {
     navegar(`/oficios?categoria=${encodeURIComponent(nombreCategoria)}`)
   }
 
-  // Busca en Oficios lo que se escribió (como el formulario del TP1, que iba a oficios.html?buscar=...)
   function buscarEnOficios(texto) {
     const busqueda = texto.trim()
     navegar(busqueda ? `/oficios?buscar=${encodeURIComponent(busqueda)}` : '/oficios')
@@ -141,7 +169,7 @@ function Inicio({ alEntrarComoCliente, alEntrarComoTrabajador }) {
 
       <section className="py-5">
         <Container>
-          <Row className="align-items-center g-5">
+          <Row className="align-items-center g-4 g-lg-5">
             <Col xs={12} lg={7}>
               <Badge bg="warning" text="dark" pill className="mb-3 px-4 py-2 fs-6 fw-semibold bg-gradient shadow">
                 <i className="bi bi-geo-alt-fill me-1"></i>Oficios en Tucumán, sin vueltas
