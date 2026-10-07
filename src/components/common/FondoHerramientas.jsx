@@ -1,5 +1,7 @@
 // Patrón decorativo de íconos de oficios para poner de fondo.
-// El contenedor tiene que tener "position-relative overflow-hidden" y cada sección encima "position-relative".
+// El contenedor tiene que tener "position-relative" y cada sección encima "position-relative".
+// El fondo se recorta solo (overflow-hidden), así el contenedor no lo necesita y las tarjetas
+// que se quedan pegadas al bajar (position-sticky) siguen funcionando.
 const ICONOS = [
   'bi-wrench',
   'bi-hammer',
@@ -21,7 +23,7 @@ const CANTIDAD = 1000
 function FondoHerramientas() {
   return (
     <div
-      className="position-absolute top-0 start-0 w-100 h-100 d-flex flex-wrap justify-content-around align-content-start gap-5 p-4 opacity-25 pe-none"
+      className="position-absolute top-0 start-0 w-100 h-100 overflow-hidden d-flex flex-wrap justify-content-around align-content-start gap-5 p-4 opacity-25 pe-none"
       aria-hidden="true"
     >
       {Array.from({ length: CANTIDAD }, (_, indice) => (
