@@ -5,7 +5,7 @@ import BotonOfiGO from '../components/common/BotonOfiGO.jsx'
 import ConSombra from '../components/common/ConSombra.jsx'
 import TarjetaPedido from '../components/common/TarjetaPedido.jsx'
 import TituloPagina from '../components/common/TituloPagina.jsx'
-import { actualizarPedido, obtenerPedidos } from '../utils/sesion.js'
+import { actualizarPedido, escucharPedidos, obtenerPedidos } from '../utils/sesion.js'
 
 // Bloque 4 - Pedidos del cliente
 // Migrado desde: historial.html (repo del TP1)
