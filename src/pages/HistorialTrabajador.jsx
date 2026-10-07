@@ -7,7 +7,7 @@ import TarjetaPedido from '../components/common/TarjetaPedido.jsx'
 import TituloPagina from '../components/common/TituloPagina.jsx'
 import { PROFESIONALES } from '../data/profesionales.js'
 import { iniciales } from '../utils/formato.js'
-import { actualizarPedido, obtenerPedidos } from '../utils/sesion.js'
+import { actualizarPedido, escucharPedidos, obtenerPedidos } from '../utils/sesion.js'
 
 // Bloque 4 - Pedidos recibidos por el trabajador
 // Migrado desde: historial-trabajador.html (repo del TP1)
@@ -108,6 +108,15 @@ function AccionesPedido({ pedido, alCambiarEstado }) {
       </ConSombra>
     </Stack>
   )
+}
+
+function esTrabajador(usuario) {
+  return Boolean(usuario && usuario.rol === 'trabajador')
+}
+
+// Solo los pedidos que le hicieron a este profesional, los más nuevos primero
+function pedidosDelTrabajador(lista, usuario) {
+  return lista.filter((pedido) => esTrabajador(usuario) && pedido.profesionalId === usuario.profesionalId).reverse()
 }
 
 function HistorialTrabajador({ usuario }) {

@@ -62,3 +62,16 @@ export function marcarGuardado(id, guardado) {
   const sinEste = obtenerGuardados().filter((idGuardado) => idGuardado !== id)
   localStorage.setItem(CLAVE_GUARDADOS, JSON.stringify(guardado ? [...sinEste, id] : sinEste))
 }
+
+// Avisa cada vez que otra pestaña cambia los pedidos guardados (el navegador dispara el evento "storage").
+// Devuelve la función que deja de escuchar: se usa como limpieza del useEffect al salir de la página.
+export function escucharPedidos(alCambiar) {
+  function manejarCambio(evento) {
+    if (evento.key === CLAVE_PEDIDOS) {
+      alCambiar(obtenerPedidos())
+    }
+  }
+
+  window.addEventListener('storage', manejarCambio)
+  return () => window.removeEventListener('storage', manejarCambio)
+}
