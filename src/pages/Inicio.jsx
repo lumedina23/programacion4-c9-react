@@ -56,11 +56,6 @@ const DESTACADOS = RANKING.slice(0, 3)
 const ALTO_ENCABEZADO = 96
 const SEPARACION_TARJETAS = 20
 
-const VENTAJAS_OFIGO = [
-  { titulo: 'Precios', texto: 'a la vista', icono: 'bi-cash-coin' },
-  { titulo: 'Reseñas', texto: 'de clientes', icono: 'bi-star-fill' },
-  { titulo: 'Cerca', texto: 'de tu casa', icono: 'bi-geo-alt-fill' },
-]
 function TarjetaComoFunciona({ paso, posicion, alCerrar }) {
   const oscura = paso.fondo === 'primary'
 
@@ -97,67 +92,27 @@ function TarjetaComoFunciona({ paso, posicion, alCerrar }) {
   )
 }
 
-function PanelComoFunciona() {
-  return (
-    <div className="sticky-lg-top z-1" style={{ top: ALTO_ENCABEZADO }}>
-      <Badge bg="warning" text="dark" pill className="mb-3 px-3 py-2 fw-semibold">
-        <i className="bi bi-stars me-1"></i>Fácil y rápido
-      </Badge>
-      <h2 className="display-6 fw-bold mb-3">
-        ¿Cómo funciona <span className="text-primary">OfiGO</span>?
-      </h2>
-      <p className="fs-5 text-secondary mb-4">
-        En tres pasos encontrás al profesional que necesitás y seguís el trabajo desde tu celular.
-      </p>
-
-      <Row xs={3} className="g-2 g-sm-3 mb-4">
-        {VENTAJAS_OFIGO.map((ventaja) => (
-          <Col key={ventaja.titulo}>
-            <ConSombra>
-              <div className="bg-white border border-2 border-primary rounded-3 text-center py-3">
-                <i className={`bi ${ventaja.icono} text-primary fs-3`}></i>
-                <p className="fs-5 fw-bolder text-primary-emphasis lh-1 my-1">{ventaja.titulo}</p>
-                <p className="small fw-semibold mb-0">{ventaja.texto}</p>
-              </div>
-            </ConSombra>
-          </Col>
-        ))}
-      </Row>
-
-      <BotonOfiGO as={Link} to="/oficios">
-        <i className="bi bi-search me-1"></i>Buscar un oficio
-      </BotonOfiGO>
-    </div>
-  )
-}
-
 function PasosComoFunciona({ pasos }) {
   const [cerrados, setCerrados] = useState([])
   const visibles = pasos.filter((paso) => !cerrados.includes(paso.numero))
 
   return (
-    <Row className="g-5">
-      <Col lg={5}>
-        <PanelComoFunciona />
-      </Col>
-
-      <Col lg={7}>
-        {visibles.length === 0 ? (
-          <Button variant="link" className="fw-semibold text-decoration-none p-0" onClick={() => setCerrados([])}>
-            <i className="bi bi-arrow-counterclockwise me-1"></i>Volver a ver los pasos
-          </Button>
-        ) : (
-          visibles.map((paso, posicion) => (
-            <TarjetaComoFunciona
-              key={paso.numero}
-              paso={paso}
-              posicion={posicion}
-              alCerrar={() => setCerrados([...cerrados, paso.numero])}
-            />
-          ))
-        )}
-      </Col>
-    </Row>
+    <div className="col-lg-8 mx-auto">
+      {visibles.length === 0 ? (
+        <Button variant="link" className="fw-semibold text-decoration-none p-0" onClick={() => setCerrados([])}>
+          <i className="bi bi-arrow-counterclockwise me-1"></i>Volver a ver los pasos
+        </Button>
+      ) : (
+        visibles.map((paso, posicion) => (
+          <TarjetaComoFunciona
+            key={paso.numero}
+            paso={paso}
+            posicion={posicion}
+            alCerrar={() => setCerrados([...cerrados, paso.numero])}
+          />
+        ))
+      )}
+    </div>
   )
 }
 
@@ -214,7 +169,7 @@ function Inicio({ alEntrarComoCliente, alEntrarComoTrabajador }) {
 
       <section className="py-5">
         <Container>
-          <Row className="align-items-center g-5">
+          <Row className="align-items-center g-4 g-lg-5">
             <Col xs={12} lg={7}>
               <Badge bg="warning" text="dark" pill className="mb-3 px-4 py-2 fs-6 fw-semibold bg-gradient shadow">
                 <i className="bi bi-geo-alt-fill me-1"></i>Oficios en Tucumán, sin vueltas
@@ -257,6 +212,7 @@ function Inicio({ alEntrarComoCliente, alEntrarComoTrabajador }) {
 
       <section className="py-5">
         <Container>
+          <TituloSeccion titulo="¿Cómo funciona OfiGO?" />
           <PasosComoFunciona pasos={PASOS} />
         </Container>
       </section>

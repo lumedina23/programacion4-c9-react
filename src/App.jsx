@@ -52,7 +52,7 @@ function App() {
         alEntrarComoCliente={entrarComoCliente}
         alCerrarSesion={cerrarSesion}
       />
-      <main className="flex-grow-1 position-relative">
+      <main className="flex-grow-1 position-relative" style={{ overflowX: 'clip' }}>
         <FondoHerramientas />
         <div className="position-relative">
           <Rutas
