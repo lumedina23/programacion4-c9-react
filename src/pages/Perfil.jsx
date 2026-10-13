@@ -1,4 +1,5 @@
 import { Badge, Button, Col, Container, Form, Row } from 'react-bootstrap'
+import ConSombra from '../components/common/ConSombra.jsx'
 import TituloPagina from '../components/common/TituloPagina.jsx'
 import { iniciales } from '../utils/formato.js'
 
@@ -10,15 +11,6 @@ const USUARIO_EJEMPLO = {
   nombre: 'Nombre del usuario',
   email: 'usuario@email.com',
   rol: 'Usuario',
-}
-
-// Sombra "dura" desplazada: un fondo de color asoma abajo y a la derecha del contenido
-function ConSombra({ color = 'warning', redondeo = 'rounded-3', children }) {
-  return (
-    <div className={`bg-${color} ${redondeo} pe-1 pb-1`}>
-      {children}
-    </div>
-  )
 }
 
 function Perfil({ usuario = USUARIO_EJEMPLO }) {
