@@ -28,7 +28,7 @@ La interfaz se reorganizó en **páginas** y **componentes reutilizables** que s
 * **Panel del trabajador:** calificación, cantidad de pedidos pendientes y acceso a los pedidos recibidos.
 * **Explorar profesionales:** filtro por oficio y búsqueda por texto (nombre, oficio o especialidad).
 * **Perfil del profesional:** calificación con estrellas, precio por hora, distancia, zona, especialidades y botón para contratar.
-* **Pedir un servicio:** formulario con dirección, fecha y descripción del problema, con validación de los campos. El pedido se guarda en el navegador.
+* **Pedir un servicio:** formulario con dirección, fecha y descripción del problema, con validación de los campos. Si la fecha elegida es feriado, avisa que el profesional puede no estar disponible (consulta una API pública). El pedido se guarda en el navegador.
 * **Mis pedidos:** el cliente ve sus pedidos con su estado y califica con estrellas y un comentario los trabajos finalizados.
 * **Pedidos recibidos:** el profesional ve cuántos pedidos tiene pendientes, en marcha y finalizados, y avanza cada uno: los acepta, los empieza, los marca como finalizados o los rechaza. También ve la calificación que le dejó el cliente.
 * **Mi perfil:** datos de la cuenta y cierre de sesión.
@@ -41,6 +41,7 @@ La interfaz se reorganizó en **páginas** y **componentes reutilizables** que s
 * **React Bootstrap** – Componentes de Bootstrap listos para usar en React (`Navbar`, `Card`, `Form`, `Offcanvas`, `Accordion`, etc.).
 * **Bootstrap Icons** – Íconos del proyecto.
 * **React Router** – Para la navegación entre las páginas.
+* **axios** – Para consumir la API pública de feriados.
 * **localStorage** – Para guardar la sesión y los pedidos, igual que en el TP1.
 * **Vercel** – Para el deploy.
 
@@ -118,6 +119,7 @@ src/
 │   ├── layout/         → Partes fijas: Encabezado, PiePagina, PanelAyuda
 │   └── common/         → Componentes reutilizables: tarjetas, buscador, títulos, botones
 ├── data/               → Datos de prueba (profesionales y categorías)
+├── services/           → Pedidos a APIs externas (feriados)
 ├── utils/              → Funciones auxiliares (formato de precios, sesión)
 └── assets/img/         → Logo e imágenes
 ```
@@ -186,6 +188,27 @@ La navegación entre páginas se hace con **React Router**, sin recargar la pág
 * `useParams` lee el id del profesional en `/profesional/:id`.
 * `useSearchParams` lee y guarda en la dirección el oficio elegido y lo buscado (`/oficios?categoria=Plomería`), igual que el TP1 con `oficios.html?categoria=...`.
 * Una ruta comodín (`*`) devuelve a la portada si la dirección no existe.
+
+## 🌐 API pública: feriados de Argentina
+
+En **Pedir servicio** consumimos la API pública de [ArgentinaDatos](https://argentinadatos.com), que devuelve los feriados nacionales de un año. Es gratuita y no necesita clave.
+
+```
+GET https://api.argentinadatos.com/v1/feriados/2026
+```
+
+```json
+[{ "fecha": "2026-10-12", "tipo": "trasladable", "nombre": "Día del Respeto a la Diversidad Cultural" }]
+```
+
+**Para qué la usamos:** cuando el cliente elige la fecha del pedido, si ese día es feriado aparece un aviso: *"El 12/10 es feriado: Día del Respeto a la Diversidad Cultural. El profesional puede no estar disponible o cobrar un recargo."*
+
+**Cómo está hecho:**
+
+* `src/services/feriados.js` tiene la función `obtenerFeriados(anio)`, que hace el pedido con **axios**. Así la página no conoce la URL de la API.
+* En `CrearPedido.jsx`, un **useEffect** llama a esa función al abrir la página. Su dependencia es `[anio]`: vuelve a pedir los feriados solo si el cliente elige una fecha de otro año.
+* Un **useState** guarda la respuesta: de qué año son los feriados, la lista y si hubo un error. Mientras la respuesta guardada no sea del año elegido, se muestra un `Spinner` de "Consultando feriados".
+* Si la API no responde, el formulario se puede enviar igual; solo se avisa que no se pudo consultar.
 
 ## 🚧 Mejoras pendientes
 
