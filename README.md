@@ -8,7 +8,6 @@ Los clientes buscan, comparan y piden el servicio; los profesionales reciben y g
 * Medina, Lourdes Natalí
 * Cura, Rocío Julieta
 * Galván, Rocío Julieta
-* Sánchez Cano, Sebastián
 
 **Programación IV · Comisión 9**
 
