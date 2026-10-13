@@ -1,5 +1,6 @@
 import { Badge, Button, Col, Container, Form, Row, Stack } from 'react-bootstrap'
 import { Link } from 'react-router-dom'
+import ConSombra from '../components/common/ConSombra.jsx'
 import TituloPagina from '../components/common/TituloPagina.jsx'
 import { PROFESIONALES } from '../data/profesionales.js'
 import { formatearPrecio, iniciales } from '../utils/formato.js'
@@ -8,15 +9,6 @@ import { formatearPrecio, iniciales } from '../utils/formato.js'
 // Migrado desde: perfiltrabajador.html (repo del TP1)
 // Solo clases de Bootstrap y Bootstrap Icons, nada de CSS propio.
 // Mismo estilo que Mi perfil (Perfil.jsx): cada dato va como un campo con etiqueta y sombra amarilla.
-
-// Sombra "dura" desplazada, igual que en Perfil: un fondo de color asoma abajo y a la derecha
-function ConSombra({ color = 'warning', redondeo = 'rounded-3', children }) {
-  return (
-    <div className={`bg-${color} ${redondeo} pe-1 pb-1`}>
-      {children}
-    </div>
-  )
-}
 
 // 5 estrellas: llenas, media y vacías según la calificación
 function Estrellas({ rating }) {
