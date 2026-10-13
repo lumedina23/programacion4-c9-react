@@ -1,8 +1,11 @@
-import { useState } from 'react'
-import { Alert, Badge, Button, Card, Col, Container, Form, Row } from 'react-bootstrap'
+import { useEffect, useState } from 'react'
+import { Alert, Badge, Button, Card, Col, Container, Form, Row, Spinner } from 'react-bootstrap'
 import { Link, useSearchParams } from 'react-router-dom'
+import Swal from 'sweetalert2'
+import ConSombra from '../components/common/ConSombra.jsx'
 import TituloPagina from '../components/common/TituloPagina.jsx'
 import { PROFESIONALES } from '../data/profesionales.js'
+import { obtenerFeriados } from '../services/feriados.js'
 import { iniciales } from '../utils/formato.js'
 import { guardarPedido } from '../utils/sesion.js'
 
@@ -32,6 +35,51 @@ function validar(pedido) {
   }
 
   return errores
+}
+
+// Aviso debajo de la fecha, según lo que respondió la API de feriados.
+// Si la API no responde, el formulario se puede enviar igual: solo se avisa que no se pudo consultar.
+function AvisoFeriado({ cargando, error, feriado }) {
+  if (cargando) {
+    return (
+      <Form.Text className="d-block">
+        <Spinner animation="border" size="sm" className="me-1" />Consultando feriados...
+      </Form.Text>
+    )
+  }
+
+  if (error) {
+    return (
+      <Form.Text className="d-block">
+        <i className="bi bi-wifi-off me-1"></i>No pudimos consultar si la fecha es feriado.
+      </Form.Text>
+    )
+  }
+
+  if (!feriado) {
+    return null
+  }
+
+  // Con el estilo de OfiGO: borde azul, fondo amarillo suave y sombra dura azul
+  const [, mes, dia] = feriado.fecha.split('-')
+  return (
+    <ConSombra color="primary" className="mt-2">
+      <div
+        role="alert"
+        className="bg-warning-subtle border border-2 border-primary rounded-3 d-flex align-items-center gap-3 px-3 py-2"
+      >
+        <div className="bg-white text-primary border border-2 border-primary rounded-circle p-2 lh-1 flex-shrink-0">
+          <i className="bi bi-calendar-x fs-5"></i>
+        </div>
+        <div className="small">
+          <p className="fw-bolder text-primary-emphasis mb-0">
+            El {dia}/{mes} es feriado: {feriado.nombre}
+          </p>
+          <p className="fw-semibold mb-0">El profesional puede no estar disponible o cobrar un recargo.</p>
+        </div>
+      </div>
+    </ConSombra>
+  )
 }
 
 // Se muestra en lugar del formulario cuando el pedido ya se guardó
@@ -68,19 +116,75 @@ function CrearPedido({ usuario }) {
   const [errores, setErrores] = useState({})
   const [enviado, setEnviado] = useState(false)
 
+  // Respuesta de la API pública: de qué año son los feriados, la lista y si hubo un error
+  const [consultaFeriados, setConsultaFeriados] = useState({ anio: null, feriados: [], error: false })
+
+  // Año de la fecha elegida (o el año actual si todavía no eligió ninguna)
+  const anio = pedido.fechaSolicitada ? Number(pedido.fechaSolicitada.slice(0, 4)) : new Date().getFullYear()
+
+  // Pide los feriados a la API al abrir la página, y de nuevo solo si el cliente elige una fecha de otro año.
+  // "ignorar" evita guardar una respuesta vieja si el año cambió antes de que la API contestara.
+  useEffect(() => {
+    let ignorar = false
+
+    obtenerFeriados(anio)
+      .then((lista) => {
+        if (!ignorar) setConsultaFeriados({ anio, feriados: lista, error: false })
+      })
+      .catch(() => {
+        if (!ignorar) setConsultaFeriados({ anio, feriados: [], error: true })
+      })
+
+    return () => {
+      ignorar = true
+    }
+  }, [anio])
+
+  // Mientras la respuesta guardada no sea del año elegido, la API todavía está contestando
+  const cargandoFeriados = consultaFeriados.anio !== anio
+
+  // La fecha del formulario viene como "2026-10-12T15:30": se compara solo el día
+  const feriadoElegido = cargandoFeriados
+    ? undefined
+    : consultaFeriados.feriados.find((feriado) => feriado.fecha === pedido.fechaSolicitada.slice(0, 10))
+
   function cambiarCampo(evento) {
     const { name, value } = evento.target
     setPedido({ ...pedido, [name]: value })
     setErrores({ ...errores, [name]: undefined })
   }
 
-  function enviar(evento) {
+  async function enviar(evento) {
     evento.preventDefault()
     const nuevosErrores = validar(pedido)
     setErrores(nuevosErrores)
 
     if (Object.keys(nuevosErrores).length > 0) {
       return
+    }
+
+    // Si la fecha es feriado, SweetAlert pregunta si se quiere enviar igual o cambiar la fecha
+    if (feriadoElegido) {
+      const [, mes, dia] = feriadoElegido.fecha.split('-')
+      const respuesta = await Swal.fire({
+        icon: 'warning',
+        title: 'La fecha elegida es feriado',
+        text: `El ${dia}/${mes} es ${feriadoElegido.nombre}. El profesional puede no estar disponible o cobrar un recargo. ¿Querés enviar el pedido igual?`,
+        showCancelButton: true,
+        confirmButtonText: 'Sí, enviar',
+        cancelButtonText: 'Cambiar fecha',
+        reverseButtons: true,
+        // Botones con clases de Bootstrap, para que se vean como el resto de OfiGO
+        buttonsStyling: false,
+        customClass: {
+          confirmButton: 'btn btn-primary rounded-pill px-4 mx-1',
+          cancelButton: 'btn btn-outline-secondary rounded-pill px-4 mx-1',
+        },
+      })
+
+      if (!respuesta.isConfirmed) {
+        return
+      }
     }
 
     // Mismos datos que usa el panel del trabajador para contar los pendientes
@@ -96,6 +200,17 @@ function CrearPedido({ usuario }) {
     })
     setPedido(PEDIDO_VACIO)
     setEnviado(true)
+
+    // Aviso chico arriba a la derecha que se cierra solo
+    Swal.fire({
+      toast: true,
+      position: 'top-end',
+      icon: 'success',
+      title: `¡Pedido enviado a ${profesional.nombre}!`,
+      showConfirmButton: false,
+      timer: 3000,
+      timerProgressBar: true,
+    })
   }
 
   // Sin profesional no se puede armar el pedido: se manda a elegir uno
@@ -183,6 +298,7 @@ function CrearPedido({ usuario }) {
                       isInvalid={!!errores.fechaSolicitada}
                     />
                     <Form.Control.Feedback type="invalid">{errores.fechaSolicitada}</Form.Control.Feedback>
+                    <AvisoFeriado cargando={cargandoFeriados} error={consultaFeriados.error} feriado={feriadoElegido} />
                   </Form.Group>
 
                   <Form.Group className="mb-4" controlId="descripcion">
